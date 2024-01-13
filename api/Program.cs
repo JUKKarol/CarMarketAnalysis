@@ -61,4 +61,5 @@ namespace CarMarketAnalysis
 
             app.Run();
         }
+    }
 }
