@@ -1,9 +1,12 @@
 using CarMarketAnalysis.Configuration;
 using CarMarketAnalysis.Data;
+using CarMarketAnalysis.Data.Repositories.BrandRepository;
+using CarMarketAnalysis.Utilities.Sieve;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Sieve.Services;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace CarMarketAnalysis
@@ -40,6 +43,9 @@ namespace CarMarketAnalysis
             builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             //services and repositories
+            builder.Services.AddScoped<IBrandRepository, BrandRepository>();
+
+            builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 
             builder.Services.AddAuthorization();
 
