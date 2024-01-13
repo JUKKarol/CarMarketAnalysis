@@ -15,7 +15,6 @@ namespace CarMarketAnalysis.Data
         public DbSet<Model> Models { get; set; }
         public DbSet<Generation> Generations { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Car>(entity => {
