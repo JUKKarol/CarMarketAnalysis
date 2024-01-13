@@ -1,3 +1,10 @@
+using CarMarketAnalysis.Configuration;
+using CarMarketAnalysis.Data;
+using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 
 namespace CarMarketAnalysis
 {
@@ -7,16 +14,38 @@ namespace CarMarketAnalysis
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
             builder.Services.AddControllers();
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+            builder.Services.Configure<AppSettings>(builder.Configuration.GetSection(nameof(AppSettings)));
+
+            builder.Services.AddDbContext<DatabaseContext>((serviceCollection, options) =>
+            {
+                var settings = serviceCollection.GetRequiredService<IOptions<AppSettings>>().Value;
+                options.UseSqlServer(settings.ConnectionStrings.DefaultConnection);
+            });
+
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+            });
+
+            builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            //services and repositories
+
+            builder.Services.AddAuthorization();
+
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -32,5 +61,4 @@ namespace CarMarketAnalysis
 
             app.Run();
         }
-    }
 }
