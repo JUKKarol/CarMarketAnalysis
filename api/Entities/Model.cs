@@ -7,5 +7,6 @@
         public Guid BrandId { get; set; }
 
         public Brand Brand { get; set; }
+        public List<Generation> Generations { get; set; }
     }
 }

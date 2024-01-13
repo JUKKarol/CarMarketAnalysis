@@ -7,5 +7,6 @@
         public Guid ModelId { get; set; }
 
         public Model Model { get; set; }
+        public List<Car> Cars { get; set; }
     }
 }
