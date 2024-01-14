@@ -52,7 +52,7 @@ namespace CarMarketAnalysis.Data.Repositories.ModelRepository
         public async Task<Model> UpdateModel(Model updatedModel)
         {
             var model = await db.Models
-                .FirstOrDefaultAsync(c => c.Id == updatedModel.Id);
+                .FirstOrDefaultAsync(m => m.Id == updatedModel.Id);
 
             var entry = db.Entry(model);
             entry.CurrentValues.SetValues(updatedModel);
