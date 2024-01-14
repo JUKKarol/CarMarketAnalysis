@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
 using Sieve.Services;
-using System.Net;
 
 namespace CarMarketAnalysis.Data.Repositories.BrandRepository
 {
@@ -14,7 +13,7 @@ namespace CarMarketAnalysis.Data.Repositories.BrandRepository
         {
             return await db.Brands
                 .AsNoTracking()
-                .FirstOrDefaultAsync(g => g.Id == brandId);
+                .FirstOrDefaultAsync(b => b.Id == brandId);
         }
 
         public async Task<List<Brand>> GetBrands(SieveModel query)
@@ -53,7 +52,7 @@ namespace CarMarketAnalysis.Data.Repositories.BrandRepository
         public async Task<Brand> UpdateBrand(Brand updatedBrand)
         {
             var brand = await db.Brands
-                .FirstOrDefaultAsync(c => c.Id == updatedBrand.Id);
+                .FirstOrDefaultAsync(b => b.Id == updatedBrand.Id);
 
             var entry = db.Entry(brand);
             entry.CurrentValues.SetValues(updatedBrand);
