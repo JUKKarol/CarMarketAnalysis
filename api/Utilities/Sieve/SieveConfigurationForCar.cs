@@ -7,7 +7,7 @@ namespace CarMarketAnalysis.Utilities.Sieve
     {
         public void Configure(SievePropertyMapper mapper)
         {
-            mapper.Property<Car>(c => c)
+            mapper.Property<Car>(c => c.Name)
                 .CanFilter()
                 .CanSort();
         }
