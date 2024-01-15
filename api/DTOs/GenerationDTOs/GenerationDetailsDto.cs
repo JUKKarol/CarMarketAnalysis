@@ -3,8 +3,8 @@
     public class GenerationDetailsDto
     {
         public Guid Id { get; set; }
-        public Guid brandId { get; set; }
+        public Guid modelId { get; set; }
         public string Name { get; set; }
-        public string BrandName { get; set; }
+        public string ModelName { get; set; }
     }
 }
