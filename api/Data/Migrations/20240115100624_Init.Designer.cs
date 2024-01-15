@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarMarketAnalysis.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240113125751_Init")]
+    [Migration("20240115100624_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -32,7 +32,6 @@ namespace CarMarketAnalysis.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -92,7 +91,6 @@ namespace CarMarketAnalysis.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Localization")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("MassagedSeats")
@@ -105,7 +103,6 @@ namespace CarMarketAnalysis.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("Parktronic")
@@ -115,7 +112,6 @@ namespace CarMarketAnalysis.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Slug")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("YearOfProduction")
@@ -138,7 +134,6 @@ namespace CarMarketAnalysis.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -158,7 +153,6 @@ namespace CarMarketAnalysis.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

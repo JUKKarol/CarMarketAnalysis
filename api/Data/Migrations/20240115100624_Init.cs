@@ -16,7 +16,7 @@ namespace CarMarketAnalysis.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,7 +28,7 @@ namespace CarMarketAnalysis.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     BrandId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -47,7 +47,7 @@ namespace CarMarketAnalysis.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -66,7 +66,7 @@ namespace CarMarketAnalysis.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Price = table.Column<int>(type: "int", nullable: false),
                     Currnecy = table.Column<int>(type: "int", nullable: false),
                     BodyType = table.Column<int>(type: "int", nullable: false),
@@ -76,8 +76,8 @@ namespace CarMarketAnalysis.Migrations
                     HorsePower = table.Column<int>(type: "int", nullable: false),
                     AutomaticTransmission = table.Column<bool>(type: "bit", nullable: false),
                     FuelType = table.Column<int>(type: "int", nullable: false),
-                    Localization = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Localization = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Slug = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ElectricSeat = table.Column<bool>(type: "bit", nullable: false),
                     HeatedSeats = table.Column<bool>(type: "bit", nullable: false),
                     HeatedBackSeats = table.Column<bool>(type: "bit", nullable: false),

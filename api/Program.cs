@@ -4,6 +4,7 @@ using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.Data.Repositories.CarRepository;
 using CarMarketAnalysis.Data.Repositories.GenerationRepository;
 using CarMarketAnalysis.Data.Repositories.ModelRepository;
+using CarMarketAnalysis.Data.Seeders;
 using CarMarketAnalysis.Utilities.Sieve;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -57,9 +58,21 @@ namespace CarMarketAnalysis
 
 
             var app = builder.Build();
+            var scope = app.Services.CreateScope();
+            var dbContext = scope.ServiceProvider.GetService<DatabaseContext>();
+
+            var pendingMigrations = dbContext.Database.GetPendingMigrations();
+            if (pendingMigrations.Any())
+            {
+                dbContext.Database.Migrate();
+            }
 
             if (app.Environment.IsDevelopment())
             {
+                var seeder = new Seeder(dbContext);
+                int recordsToSeed = 10;
+                seeder.Seed(recordsToSeed);
+
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
