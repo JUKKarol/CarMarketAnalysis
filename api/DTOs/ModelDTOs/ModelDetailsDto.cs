@@ -1,4 +1,6 @@
-﻿namespace CarMarketAnalysis.DTOs.ModelDTOs
+﻿using CarMarketAnalysis.DTOs.GenerationDTOs;
+
+namespace CarMarketAnalysis.DTOs.ModelDTOs
 {
     public class ModelDetailsDto
     {
