@@ -12,8 +12,16 @@ namespace CarMarketAnalysis.Data.Repositories.BrandRepository
         public async Task<Brand> GetBrandById(Guid brandId)
         {
             return await db.Brands
+                .Include(b => b.Models)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(b => b.Id == brandId);
+        }
+
+        public async Task<Brand> GetBrandByName(string brandName)
+        {
+            return await db.Brands
+                .AsNoTracking()
+                .FirstOrDefaultAsync(b => b.Name.ToLower() == brandName.ToLower());
         }
 
         public async Task<List<Brand>> GetBrands(SieveModel query)
