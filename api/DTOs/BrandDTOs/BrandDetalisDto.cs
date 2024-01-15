@@ -1,4 +1,4 @@
-﻿using CarMarketAnalysis.DTOs.SharedDTOs;
+﻿using CarMarketAnalysis.DTOs.ModelDTOs;
 
 namespace CarMarketAnalysis.DTOs.BrandDTOs
 {

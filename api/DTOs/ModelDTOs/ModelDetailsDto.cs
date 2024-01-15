@@ -1,6 +1,6 @@
 ﻿namespace CarMarketAnalysis.DTOs.ModelDTOs
 {
-    public class GenerationDetailsDto
+    public class ModelDetailsDto
     {
         public Guid Id { get; set; }
         public Guid brandId { get; set; }
