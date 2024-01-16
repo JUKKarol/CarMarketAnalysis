@@ -11,16 +11,16 @@ namespace CarMarketAnalysis.Services.BrandService
         IBrandRepository brandRepository,
         IMapper mapper) : IBrandService
     {
-        public async Task<BrandDetalisDto> GetBrandById(Guid brandId)
+        public async Task<BrandDetailsDto> GetBrandById(Guid brandId)
         {
             var brand = await brandRepository.GetBrandById(brandId);
-            return mapper.Map<BrandDetalisDto>(brand);
+            return mapper.Map<BrandDetailsDto>(brand);
         }
 
-        public async Task<BrandDetalisDto> GetBrandByName(string brandName)
+        public async Task<BrandDetailsDto> GetBrandByName(string brandName)
         {
             var brand = await brandRepository.GetBrandByName(brandName);
-            return mapper.Map<BrandDetalisDto>(brand);
+            return mapper.Map<BrandDetailsDto>(brand);
         }
 
         public async Task<RespondListDto<BrandDisplayDto>> GetBrands(SieveModel query)

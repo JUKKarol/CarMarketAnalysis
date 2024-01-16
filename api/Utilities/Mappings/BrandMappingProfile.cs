@@ -9,7 +9,7 @@ namespace CarMarketAnalysis.Utilities.Mappings
         public BrandMappingProfile()
         {
             CreateMap<BrandDisplayDto, Brand>().ReverseMap();
-            CreateMap<Brand, BrandDetalisDto>().ForMember(dest => dest.Models, opt => opt.MapFrom(src => src.Models));
+            CreateMap<Brand, BrandDetailsDto>().ForMember(dest => dest.Models, opt => opt.MapFrom(src => src.Models));
             CreateMap<BrandCreateDto, Brand>().ReverseMap();
             CreateMap<BrandUpdateDto, Brand>().ReverseMap();
         }
