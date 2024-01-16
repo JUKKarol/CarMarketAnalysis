@@ -6,6 +6,8 @@ using CarMarketAnalysis.Data.Repositories.GenerationRepository;
 using CarMarketAnalysis.Data.Repositories.ModelRepository;
 using CarMarketAnalysis.Data.Seeders;
 using CarMarketAnalysis.Services.BrandService;
+using CarMarketAnalysis.Services.GenerationService;
+using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Utilities.Sieve;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +56,8 @@ namespace CarMarketAnalysis
             builder.Services.AddScoped<ICarRepository, CarRepository>();
 
             builder.Services.AddScoped<IBrandService, BrandService>();
+            builder.Services.AddScoped<IModelService, ModelService>();
+            builder.Services.AddScoped<IGenerationService, GenerationService>();
 
             builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 
