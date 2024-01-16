@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+ app:
+  build:
+   context: .
+   dockerfile: Dockerfile
+  ports:
+   - "8080:80"
+  depends_on:
+   - sqldata
+  environment:
+    ConnectionStrings__DefaultConnection: "Server=sqldata;Database=CarMarketAnalysisDb;User Id=sa;Password=CarMarketAnalysis@;TrustServerCertificate=True"
+ sqldata:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=CarMarketAnalysis@
