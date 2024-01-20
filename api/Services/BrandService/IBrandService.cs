@@ -9,7 +9,8 @@ namespace CarMarketAnalysis.Services.BrandService
         Task<BrandDetailsDto> GetBrandById(Guid brandId);
         Task<BrandDetailsDto> GetBrandByName(string brandName);
         Task<RespondListDto<BrandDisplayDto>> GetBrands(SieveModel query);
-        Task<BrandDisplayDto> CreateBrand(BrandCreateDto brandDto);
+        Task<List<string>> GetAllBrandsAsString();
+        Task<List<BrandDisplayDto>> CreateBrands(List<BrandCreateDto> brandsDto);
         Task<BrandDisplayDto> UpdateBrand(BrandUpdateDto brandDto);
     }
 }

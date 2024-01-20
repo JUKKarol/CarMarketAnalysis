@@ -38,12 +38,20 @@ namespace CarMarketAnalysis.Services.BrandService
             return respondListDto;
         }
 
-        public async Task<BrandDisplayDto> CreateBrand(BrandCreateDto brandDto)
+        public async Task<List<string>> GetAllBrandsAsString()
         {
-            var brand = mapper.Map<Brand>(brandDto);
-            await brandRepository.CreateBrand(brand);
+            var brands = await brandRepository.GetAllBrands();
+            List<string> brandsStrings = brands.Select(brand => brand.Name).ToList();
 
-            return mapper.Map<BrandDisplayDto>(brand);
+            return brandsStrings;
+        }
+
+        public async Task<List<BrandDisplayDto>> CreateBrands(List<BrandCreateDto> brandsDto)
+        {
+            var brands = mapper.Map<List<Brand>>(brandsDto);
+            await brandRepository.CreateBrands(brands);
+
+            return mapper.Map<List<BrandDisplayDto>>(brands);
         }
 
         public async Task<BrandDisplayDto> UpdateBrand(BrandUpdateDto brandDto)

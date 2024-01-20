@@ -37,6 +37,15 @@ namespace CarMarketAnalysis.Data.Repositories.BrandRepository
                 .ToListAsync();
         }
 
+        public async Task<List<Brand>> GetAllBrands()
+        {
+            return await db
+                .Brands
+                .AsNoTracking()
+                .ToListAsync();
+            
+        }
+
         public async Task<int> GetBrandsCount(SieveModel query)
         {
             var brands = db
@@ -55,6 +64,14 @@ namespace CarMarketAnalysis.Data.Repositories.BrandRepository
             await db.SaveChangesAsync();
 
             return brand;
+        }
+
+        public async Task<List<Brand>> CreateBrands(List<Brand> brands)
+        {
+            await db.AddRangeAsync(brands);
+            await db.SaveChangesAsync();
+
+            return brands;
         }
 
         public async Task<Brand> UpdateBrand(Brand updatedBrand)

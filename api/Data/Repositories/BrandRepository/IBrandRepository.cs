@@ -8,8 +8,10 @@ namespace CarMarketAnalysis.Data.Repositories.BrandRepository
         Task<Brand> GetBrandById(Guid brandId);
         Task<Brand> GetBrandByName(string brandName);
         Task<List<Brand>> GetBrands(SieveModel query);
+        Task<List<Brand>> GetAllBrands();
         Task<int> GetBrandsCount(SieveModel query);
         Task<Brand> CreateBrand(Brand brand);
+        Task<List<Brand>> CreateBrands(List<Brand> brands);
         Task<Brand> UpdateBrand(Brand updatedBrand);
     }
 }

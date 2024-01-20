@@ -2,6 +2,6 @@
 {
     public interface IPlaywrightService
     {
-        Task<string> GetPageCount();
+        Task<List<string>> RefreshBrands();
     }
 }
