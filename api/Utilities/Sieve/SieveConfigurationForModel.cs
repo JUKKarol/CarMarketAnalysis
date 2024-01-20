@@ -10,6 +10,14 @@ namespace CarMarketAnalysis.Utilities.Sieve
             mapper.Property<Model>(m => m.Name)
                 .CanFilter()
                 .CanSort();
+
+            mapper.Property<Model>(m => m.Id)
+               .CanFilter()
+               .CanSort();
+
+            mapper.Property<Model>(m => m.BrandId)
+               .CanFilter()
+               .CanSort();
         }
     }
 }
