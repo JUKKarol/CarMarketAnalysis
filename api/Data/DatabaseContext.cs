@@ -13,16 +13,15 @@ namespace CarMarketAnalysis.Data
         public DbSet<Car> Cars { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Model> Models { get; set; }
-        public DbSet<Generation> Generations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder.Entity<Car>(entity => {
                 entity.HasKey(c => c.Id);
 
-                entity.HasOne(c => c.Generation)
-                    .WithMany(g => g.Cars)
-                    .HasForeignKey(g => g.GenerationId);
+                entity.HasOne(c => c.Model)
+                    .WithMany(m => m.Cars)
+                    .HasForeignKey(c => c.ModelId);
             });
 
             builder.Entity<Brand>(entity => {
@@ -40,21 +39,9 @@ namespace CarMarketAnalysis.Data
                     .WithMany(b => b.Models)
                     .HasForeignKey(m => m.BrandId);
 
-                entity.HasMany(m => m.Generations)
-                    .WithOne(g => g.Model)
-                    .HasForeignKey(g => g.ModelId);
-            });
-
-            builder.Entity<Generation>(entity => {
-                entity.HasKey(g => g.Id);
-
-                entity.HasOne(g => g.Model)
-                    .WithMany(m => m.Generations)
-                    .HasForeignKey(g => g.ModelId);
-
-                entity.HasMany(g => g.Cars)
-                    .WithOne(c => c.Generation)
-                    .HasForeignKey(c => c.GenerationId);
+                entity.HasMany(m => m.Cars)
+                    .WithOne(c => c.Model)
+                    .HasForeignKey(c => c.ModelId);
             });
 
             base.OnModelCreating(builder);

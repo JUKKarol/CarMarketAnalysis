@@ -12,7 +12,6 @@ namespace CarMarketAnalysis.Data.Repositories.ModelRepository
         public async Task<Model> GetModelById(Guid modelId)
         {
             return await db.Models
-                .Include(m => m.Generations)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == modelId);
         }

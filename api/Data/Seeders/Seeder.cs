@@ -9,7 +9,7 @@ namespace CarMarketAnalysis.Data.Seeders
     {
         public void Seed(int recordsToSeed)
         {
-            if (!db.Generations.Any() && !db.Models.Any() && !db.Brands.Any() && !db.Cars.Any())
+            if (!db.Models.Any() && !db.Brands.Any() && !db.Cars.Any())
             {
 
                 var locale = "pl";
@@ -21,10 +21,6 @@ namespace CarMarketAnalysis.Data.Seeders
                 var modelGenerator = new Faker<Model>()
                         .RuleFor(m => m.Id, f => f.Random.Guid())
                         .RuleFor(m => m.Name, f => f.Vehicle.Model());
-
-                var generationGenerator = new Faker<Generation>()
-                        .RuleFor(g => g.Id, f => f.Random.Guid())
-                        .RuleFor(g => g.Name, f => f.Vehicle.Model());
 
                 var carGenerator = new Faker<Car>(locale)
                         .RuleFor(c => c.Id, f => f.Random.Guid())
@@ -52,32 +48,27 @@ namespace CarMarketAnalysis.Data.Seeders
 
                 List<Brand> brands = [];
                 List<Model> models = [];
-                List<Generation> generations = [];
                 List<Car> cars = [];
 
                 for (int i = 0; i < recordsToSeed; i++)
                 {
                     var brand = brandGenerator.Generate();
                     var model = modelGenerator.Generate();
-                    var generation = generationGenerator.Generate();
                     var car = carGenerator.Generate();
 
 
                     model.BrandId = brand.Id;
-                    generation.ModelId = model.Id;
-                    car.GenerationId = generation.Id;
+                    car.ModelId = model.Id;
 
 
 
                     brands.Add(brand);
                     models.Add(model);
-                    generations.Add(generation);
                     cars.Add(car);
                 }
 
                 db.AddRange(brands);
                 db.AddRange(models);
-                db.AddRange(generations);
                 db.AddRange(cars);
 
                 db.SaveChanges();

@@ -1,5 +1,4 @@
-﻿using CarMarketAnalysis.DTOs.GenerationDTOs;
-using CarMarketAnalysis.Entities;
+﻿using CarMarketAnalysis.DTOs.ModelDTOs;
 using CarMarketAnalysis.Enums;
 
 namespace CarMarketAnalysis.DTOs.CarDTOs
@@ -32,6 +31,6 @@ namespace CarMarketAnalysis.DTOs.CarDTOs
 
         public DateTime CreatedAt { get; set; }
 
-        public GenerationDisplayDto Generation { get; set; }
+        public ModelDisplayDto Model { get; set; }
     }
 }

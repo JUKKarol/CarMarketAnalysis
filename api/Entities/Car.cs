@@ -29,8 +29,8 @@ namespace CarMarketAnalysis.Entities
         public bool HeatedWheel { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public Guid GenerationId { get; set; }
+        public Guid ModelId { get; set; }
 
-        public Generation Generation { get; set; }
+        public Model Model { get; set; }
     }
 }

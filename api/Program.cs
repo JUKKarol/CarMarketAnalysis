@@ -2,15 +2,12 @@ using CarMarketAnalysis.Configuration;
 using CarMarketAnalysis.Data;
 using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.Data.Repositories.CarRepository;
-using CarMarketAnalysis.Data.Repositories.GenerationRepository;
 using CarMarketAnalysis.Data.Repositories.ModelRepository;
 using CarMarketAnalysis.Data.Seeders;
 using CarMarketAnalysis.Services.BrandService;
-using CarMarketAnalysis.Services.GenerationService;
 using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService;
 using CarMarketAnalysis.Utilities.Sieve;
-using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
@@ -53,12 +50,10 @@ namespace CarMarketAnalysis
             //services and repositories
             builder.Services.AddScoped<IBrandRepository, BrandRepository>();
             builder.Services.AddScoped<IModelRepository, ModelRepository>();
-            builder.Services.AddScoped<IGenerationRepository, GenerationRepository>();
             builder.Services.AddScoped<ICarRepository, CarRepository>();
 
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<IModelService, ModelService>();
-            builder.Services.AddScoped<IGenerationService, GenerationService>();
             builder.Services.AddScoped<IPlaywrightService, PlaywrightService>();
 
             builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
