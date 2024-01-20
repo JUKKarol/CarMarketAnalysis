@@ -11,7 +11,7 @@ namespace CarMarketAnalysis.Controllers
 
     {
         [HttpGet]
-        public async Task<IActionResult> GetModelsByBrandName([FromQuery] SieveModel query)
+        public async Task<IActionResult> GetModels([FromQuery] SieveModel query)
         {
             return Ok(await modelService.GetModels(query));
         }

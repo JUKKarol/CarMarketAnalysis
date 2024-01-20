@@ -2,6 +2,7 @@
 using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.Data.Repositories.ModelRepository;
 using CarMarketAnalysis.DTOs.BrandDTOs;
+using CarMarketAnalysis.DTOs.GenerationDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
 using CarMarketAnalysis.DTOs.SharedDTOs;
 using CarMarketAnalysis.Entities;
@@ -16,7 +17,10 @@ namespace CarMarketAnalysis.Services.ModelService
         public async Task<ModelDetailsDto> GetModelById(Guid modelId)
         {
             var model = await modelRepository.GetModelById(modelId);
-            return mapper.Map<ModelDetailsDto>(model);
+            var modelDto = mapper.Map<ModelDetailsDto>(model);
+            modelDto.Generations = mapper.Map<List<GenerationDisplayDto>>(model.Generations);
+
+            return modelDto;
         }
 
         public async Task<RespondListDto<ModelDisplayDto>> GetModels(SieveModel query)

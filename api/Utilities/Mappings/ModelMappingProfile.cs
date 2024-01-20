@@ -8,7 +8,8 @@ namespace CarMarketAnalysis.Utilities.Mappings
     {
         public ModelMappingProfile()
         {
-            CreateMap<Model, ModelDetailsDto>().AfterMap((src, dest) => dest.BrandName = src.Brand.Name);
+            CreateMap<Model, ModelDetailsDto>()
+              .ForMember(dest => dest.Generations, opt => opt.MapFrom(src => src.Generations));
             CreateMap<Model, ModelDisplayDto>().ReverseMap();
             CreateMap<ModelCreateDto, Model>().ReverseMap();
             CreateMap<ModelUpdateDto, Model>().ReverseMap();
