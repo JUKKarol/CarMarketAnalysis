@@ -8,6 +8,7 @@ using CarMarketAnalysis.Data.Seeders;
 using CarMarketAnalysis.Services.BrandService;
 using CarMarketAnalysis.Services.GenerationService;
 using CarMarketAnalysis.Services.ModelService;
+using CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService;
 using CarMarketAnalysis.Utilities.Sieve;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -58,6 +59,7 @@ namespace CarMarketAnalysis
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<IModelService, ModelService>();
             builder.Services.AddScoped<IGenerationService, GenerationService>();
+            builder.Services.AddScoped<IPlaywrightService, PlaywrightService>();
 
             builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 
