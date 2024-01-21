@@ -6,11 +6,13 @@ using CarMarketAnalysis.Data.Repositories.ModelRepository;
 using CarMarketAnalysis.Data.Seeders;
 using CarMarketAnalysis.Services.BrandService;
 using CarMarketAnalysis.Services.ModelService;
+using CarMarketAnalysis.Services.PlaywrightServices.Pages;
 using CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService;
 using CarMarketAnalysis.Utilities.Sieve;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using Microsoft.Playwright;
 using Sieve.Services;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -55,6 +57,7 @@ namespace CarMarketAnalysis
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<IModelService, ModelService>();
             builder.Services.AddScoped<IPlaywrightService, PlaywrightService>();
+            builder.Services.AddScoped<IPages, Pages>();
 
             builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 
