@@ -12,15 +12,23 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
         IBrandService brandService,
         IPages pages) : IPlaywrightService
     {
+        private async Task CreatePage(IPage page)
+        {
+            using var playwright = await Playwright.CreateAsync();
+            var browser = await playwright.Chromium.LaunchAsync();
+            page = await browser.NewPageAsync();
+
+            await page.GotoAsync(pages.Url);
+            await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
+        }
+
         public async Task<List<string>> RefreshBrands()
         {
             using var playwright = await Playwright.CreateAsync();
-
-            await using var browser = await playwright.Chromium.LaunchAsync();
-
+            var browser = await playwright.Chromium.LaunchAsync();
             var page = await browser.NewPageAsync();
-            await page.GotoAsync(pages.Url);
 
+            await page.GotoAsync(pages.Url);
             await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
 
             await page.Locator("div[data-testid='filter_enum_make']").First.ClickAsync();
@@ -43,12 +51,10 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
         public async Task<int> GetPagesCount()
         {
             using var playwright = await Playwright.CreateAsync();
-
-            await using var browser = await playwright.Chromium.LaunchAsync();
-
+            var browser = await playwright.Chromium.LaunchAsync();
             var page = await browser.NewPageAsync();
-            await page.GotoAsync(pages.Url);
 
+            await page.GotoAsync(pages.Url);
             await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
 
             var pagesCountString = await page.Locator("ul[class*='pagination-list'] li[data-testid='pagination-list-item']").Last.InnerTextAsync();
