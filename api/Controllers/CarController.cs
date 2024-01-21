@@ -10,9 +10,9 @@ namespace CarMarketAnalysis.Controllers
     public class CarController(IPlaywrightService playwrightService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> RefreshBrands()
+        public async Task<IActionResult> GetPagesCount()
         {
-            return Ok(await playwrightService.RefreshBrands());
+            return Ok(await playwrightService.GetPagesCount());
         }
     }
 }

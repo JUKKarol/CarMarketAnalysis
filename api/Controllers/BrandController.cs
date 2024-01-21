@@ -1,4 +1,5 @@
 ﻿using CarMarketAnalysis.Services.BrandService;
+using CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService;
 using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
@@ -7,7 +8,9 @@ namespace CarMarketAnalysis.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BrandController(IBrandService brandService) : ControllerBase
+    public class BrandController(
+        IBrandService brandService,
+        IPlaywrightService playwrightService) : ControllerBase
     {
         [HttpGet]
         public async Task<IActionResult> GetBrands([FromQuery] SieveModel query)
@@ -26,6 +29,12 @@ namespace CarMarketAnalysis.Controllers
             }
 
             return Ok(brand);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> RefreshBrands()
+        {
+            return Ok(await playwrightService.RefreshBrands());
         }
     }
 }
