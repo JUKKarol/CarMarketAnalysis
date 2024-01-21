@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.Data.Repositories.ModelRepository;
+using CarMarketAnalysis.DTOs.BrandDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
 using CarMarketAnalysis.DTOs.SharedDTOs;
 using CarMarketAnalysis.Entities;
@@ -40,6 +42,14 @@ namespace CarMarketAnalysis.Services.ModelService
             await modelRepository.CreateModel(model);
 
             return mapper.Map<ModelDisplayDto>(model);
+        }
+
+        public async Task<List<ModelDisplayDto>> CreateModels(List<ModelCreateDto> modelsDto)
+        {
+            var models = mapper.Map<List<Model>>(modelsDto);
+            await modelRepository.CreateModels(models);
+
+            return mapper.Map<List<ModelDisplayDto>>(models);
         }
 
         public async Task<ModelDisplayDto> UpdateModel(ModelUpdateDto modelDto)

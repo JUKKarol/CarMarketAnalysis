@@ -1,25 +1,31 @@
 ﻿using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.DTOs.BrandDTOs;
+using CarMarketAnalysis.DTOs.ModelDTOs;
 using CarMarketAnalysis.Services.BrandService;
+using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.PlaywrightServices.Pages;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Playwright;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 {
     public class PlaywrightService(
         IBrandService brandService,
+        IModelService modelService,
         IPages pages) : IPlaywrightService
     {
-        private async Task CreatePage(IPage page)
+        private async Task<IPage> CreatePage()
         {
             using var playwright = await Playwright.CreateAsync();
             var browser = await playwright.Chromium.LaunchAsync();
-            page = await browser.NewPageAsync();
+            var page = await browser.NewPageAsync();
 
             await page.GotoAsync(pages.Url);
             await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
+
+            return page;
         }
 
         public async Task<List<string>> RefreshBrands()
@@ -46,6 +52,51 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
             await brandService.CreateBrands(brandsToInsertDto);
 
             return brandsToInsert;
+        }
+
+        public async Task<List<ModelDisplayDto>> RefreshModels()
+        {
+            using var playwright = await Playwright.CreateAsync();
+            var browser = await playwright.Chromium.LaunchAsync();
+            var page = await browser.NewPageAsync();
+
+            await page.GotoAsync(pages.Url);
+            await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
+
+            var currnetBrands = await brandService.GetAllBrands();
+
+            List<ModelDisplayDto> allCreatedModels = new();
+
+            foreach (var brand in currnetBrands)
+            {
+                await page.Locator("div[data-testid='filter_enum_make']").First.ClickAsync();
+
+                await page.Locator("div[data-testid='filter_enum_make'] ul").GetByText(brand.Name).ClickAsync();
+                await page.Locator("div[data-testid='filter_enum_make'] button[data-testid='arrow']").ClickAsync();
+                await page.Locator("div[data-testid='filter_enum_model']").First.ClickAsync();
+                var modelsUl = await page.Locator("div[data-testid='filter_enum_model'] ul li").AllTextContentsAsync();
+
+                var models = modelsUl.Skip(1).ToList();
+                var modelsTrimmed = models.Select(model =>
+                {
+                    return Regex.Replace(model, @"[\d\(\)]", "").ToLower().Trim();
+                }).ToList();
+
+                var currentModels = brand.Models.Select(m => m.Name);
+
+                var modelsToInsert = modelsTrimmed.Except(currentModels).ToList();
+
+                List<ModelCreateDto> modelsToInsertDto = modelsToInsert.Select(name => new ModelCreateDto { Name = name, brandId = brand.Id }).ToList();
+
+                var createdModels = await modelService.CreateModels(modelsToInsertDto);
+
+                allCreatedModels.AddRange(createdModels);
+
+                await page.Locator("div[data-testid='filter_enum_model'] button[data-testid='arrow']").ClickAsync();
+                await page.Locator("div[data-testid='filter_enum_make'] button[data-testid='arrow']").ClickAsync();
+            }
+
+            return allCreatedModels;
         }
 
         public async Task<int> GetPagesCount()

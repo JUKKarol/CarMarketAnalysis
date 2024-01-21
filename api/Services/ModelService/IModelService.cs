@@ -9,6 +9,7 @@ namespace CarMarketAnalysis.Services.ModelService
         Task<ModelDetailsDto> GetModelById(Guid modelId);
         Task<RespondListDto<ModelDisplayDto>> GetModels(SieveModel query);
         Task<ModelDisplayDto> CreateModel(ModelCreateDto modelDto);
+        Task<List<ModelDisplayDto>> CreateModels(List<ModelCreateDto> modelsDto);
         Task<ModelDisplayDto> UpdateModel(ModelUpdateDto modelDto);
     }
 }

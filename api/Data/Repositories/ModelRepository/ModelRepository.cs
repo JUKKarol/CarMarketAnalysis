@@ -49,6 +49,14 @@ namespace CarMarketAnalysis.Data.Repositories.ModelRepository
             return model;
         }
 
+        public async Task<List<Model>> CreateModels(List<Model> models)
+        {
+            await db.AddRangeAsync(models);
+            await db.SaveChangesAsync();
+
+            return models;
+        }
+
         public async Task<Model> UpdateModel(Model updatedModel)
         {
             var model = await db.Models
