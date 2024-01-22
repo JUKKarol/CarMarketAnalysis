@@ -4,5 +4,8 @@
     {
         string Url { get; }
         string AcceptCookiesBtn { get; }
+        string FilterBrandDiv { get; }
+        string FilterModelDiv { get; }
+        string ArrowBtn { get; }
     }
 }

@@ -37,8 +37,8 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
             await page.GotoAsync(pages.Url);
             await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
 
-            await page.Locator("div[data-testid='filter_enum_make']").First.ClickAsync();
-            var brandsUl = await page.Locator("div[data-testid='filter_enum_make'] ul li").AllTextContentsAsync();
+            await page.Locator(pages.FilterBrandDiv).First.ClickAsync();
+            var brandsUl = await page.Locator($"{pages.FilterBrandDiv} ul li").AllTextContentsAsync();
 
             var brands = brandsUl.Skip(1).ToList();
             var brandsTrimmed = brands.Select(brand =>
@@ -56,8 +56,13 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
         public async Task<List<ModelDisplayDto>> RefreshModels()
         {
+            var launchOptions = new BrowserTypeLaunchOptions
+            {
+                Headless = false
+            };
+
             using var playwright = await Playwright.CreateAsync();
-            var browser = await playwright.Chromium.LaunchAsync();
+            var browser = await playwright.Chromium.LaunchAsync(launchOptions);
             var page = await browser.NewPageAsync();
 
             await page.GotoAsync(pages.Url);
@@ -69,17 +74,17 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
             foreach (var brand in currnetBrands)
             {
-                await page.Locator("div[data-testid='filter_enum_make']").First.ClickAsync();
+                await page.Locator(pages.FilterBrandDiv).First.ClickAsync();
 
-                await page.Locator("div[data-testid='filter_enum_make'] ul").GetByText(brand.Name).ClickAsync();
-                await page.Locator("div[data-testid='filter_enum_make'] button[data-testid='arrow']").ClickAsync();
-                await page.Locator("div[data-testid='filter_enum_model']").First.ClickAsync();
-                var modelsUl = await page.Locator("div[data-testid='filter_enum_model'] ul li").AllTextContentsAsync();
+                await page.Locator($"{pages.FilterBrandDiv} ul").GetByText(brand.Name).First.ClickAsync();
+                await page.Locator($"{pages.FilterBrandDiv} {pages.ArrowBtn}").ClickAsync();
+                await page.Locator(pages.FilterModelDiv).First.ClickAsync();
+                var modelsUl = await page.Locator($"{pages.FilterModelDiv} ul li").AllTextContentsAsync();
 
                 var models = modelsUl.Skip(1).ToList();
                 var modelsTrimmed = models.Select(model =>
                 {
-                    return Regex.Replace(model, @"[\d\(\)]", "").ToLower().Trim();
+                    return Regex.Replace(model, @"\(.+$", "").ToLower().Trim();
                 }).ToList();
 
                 var currentModels = brand.Models.Select(m => m.Name);
@@ -92,8 +97,8 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
                 allCreatedModels.AddRange(createdModels);
 
-                await page.Locator("div[data-testid='filter_enum_model'] button[data-testid='arrow']").ClickAsync();
-                await page.Locator("div[data-testid='filter_enum_make'] button[data-testid='arrow']").ClickAsync();
+                await page.Locator($"{pages.FilterModelDiv} {pages.ArrowBtn}").ClickAsync();
+                await page.Locator($"{pages.FilterBrandDiv} {pages.ArrowBtn}").ClickAsync();
             }
 
             return allCreatedModels;
