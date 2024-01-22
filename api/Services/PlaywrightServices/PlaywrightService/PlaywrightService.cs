@@ -54,21 +54,21 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
             return brandsToInsert;
         }
 
-        public async Task<List<ModelDisplayDto>> RefreshModels()
+        public async Task<List<ModelDisplayDto>> RefreshModels(bool refreshForEmptyBrandsOnly)
         {
-            var launchOptions = new BrowserTypeLaunchOptions
-            {
-                Headless = false
-            };
-
             using var playwright = await Playwright.CreateAsync();
-            var browser = await playwright.Chromium.LaunchAsync(launchOptions);
+            var browser = await playwright.Chromium.LaunchAsync();
             var page = await browser.NewPageAsync();
 
             await page.GotoAsync(pages.Url);
             await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
 
             var currnetBrands = await brandService.GetAllBrands();
+
+            if (refreshForEmptyBrandsOnly)
+            {
+                currnetBrands = currnetBrands.Where(b => b.Models.Count == 0).ToList();
+            }
 
             List<ModelDisplayDto> allCreatedModels = new();
 

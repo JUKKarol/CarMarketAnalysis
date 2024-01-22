@@ -33,9 +33,15 @@ namespace CarMarketAnalysis.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> RefreshBrands()
+        public async Task<IActionResult> RefreshModels()
         {
-            return Ok(await playwrightService.RefreshModels());
+            return Ok(await playwrightService.RefreshModels(false));
+        }
+
+        [HttpPut("emptyBrandsOnly")]
+        public async Task<IActionResult> RefreshModelsForEmptyBrandsOnly()
+        {
+            return Ok(await playwrightService.RefreshModels(true));
         }
     }
 }

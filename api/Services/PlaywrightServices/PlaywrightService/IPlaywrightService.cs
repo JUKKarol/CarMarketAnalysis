@@ -5,7 +5,7 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
     public interface IPlaywrightService
     {
         Task<List<string>> RefreshBrands();
-        Task<List<ModelDisplayDto>> RefreshModels();
+        Task<List<ModelDisplayDto>> RefreshModels(bool refreshForEmptyBrandsOnly);
         Task<int> GetPagesCount();
     }
 }
