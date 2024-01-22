@@ -43,7 +43,15 @@ namespace CarMarketAnalysis.Data.Repositories.BrandRepository
                 .Brands
                 .AsNoTracking()
                 .ToListAsync();
-            
+        }
+
+        public async Task<List<Brand>> GetAllBrandsIncludeModels()
+        {
+            return await db
+                .Brands
+                .Include(b => b.Models)
+                .AsNoTracking()
+                .ToListAsync();
         }
 
         public async Task<int> GetBrandsCount(SieveModel query)

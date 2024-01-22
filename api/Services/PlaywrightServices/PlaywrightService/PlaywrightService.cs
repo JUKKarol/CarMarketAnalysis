@@ -75,9 +75,10 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
             foreach (var brand in currnetBrands)
             {
                 await page.Locator(pages.FilterBrandDiv).First.ClickAsync();
-
                 await page.Locator($"{pages.FilterBrandDiv} ul").GetByText(brand.Name).First.ClickAsync();
                 await page.Locator($"{pages.FilterBrandDiv} {pages.ArrowBtn}").ClickAsync();
+                
+                await page.Locator("div[aria-label='Results header'] ul li").GetByText(brand.Name).WaitForAsync();
                 await page.Locator(pages.FilterModelDiv).First.ClickAsync();
                 var modelsUl = await page.Locator($"{pages.FilterModelDiv} ul li").AllTextContentsAsync();
 
@@ -88,17 +89,19 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
                 }).ToList();
 
                 var currentModels = brand.Models.Select(m => m.Name);
-
                 var modelsToInsert = modelsTrimmed.Except(currentModels).ToList();
-
                 List<ModelCreateDto> modelsToInsertDto = modelsToInsert.Select(name => new ModelCreateDto { Name = name, brandId = brand.Id }).ToList();
 
-                var createdModels = await modelService.CreateModels(modelsToInsertDto);
+                if (modelsToInsertDto.Any())
+                {
+                    var createdModels = await modelService.CreateModels(modelsToInsertDto);
 
-                allCreatedModels.AddRange(createdModels);
+                    allCreatedModels.AddRange(createdModels);
+                }
 
                 await page.Locator($"{pages.FilterModelDiv} {pages.ArrowBtn}").ClickAsync();
                 await page.Locator($"{pages.FilterBrandDiv} {pages.ArrowBtn}").ClickAsync();
+                await page.Locator("div[aria-label='Results header'] ul li").GetByText(brand.Name).WaitForAsync(new LocatorWaitForOptions() { State = WaitForSelectorState.Hidden });
             }
 
             return allCreatedModels;
