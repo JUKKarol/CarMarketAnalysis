@@ -7,5 +7,6 @@
         string FilterBrandDiv { get; }
         string FilterModelDiv { get; }
         string ArrowBtn { get; }
+        string ResultHeaderDiv { get; }
     }
 }

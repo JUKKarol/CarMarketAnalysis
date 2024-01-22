@@ -78,7 +78,7 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
                 await page.Locator($"{pages.FilterBrandDiv} ul").GetByText(brand.Name).First.ClickAsync();
                 await page.Locator($"{pages.FilterBrandDiv} {pages.ArrowBtn}").ClickAsync();
                 
-                await page.Locator("div[aria-label='Results header'] ul li").GetByText(brand.Name).WaitForAsync();
+                await page.Locator($"{pages.ResultHeaderDiv} ul li").GetByText(brand.Name).WaitForAsync();
                 await page.Locator(pages.FilterModelDiv).First.ClickAsync();
                 var modelsUl = await page.Locator($"{pages.FilterModelDiv} ul li").AllTextContentsAsync();
 
@@ -101,7 +101,7 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
                 await page.Locator($"{pages.FilterModelDiv} {pages.ArrowBtn}").ClickAsync();
                 await page.Locator($"{pages.FilterBrandDiv} {pages.ArrowBtn}").ClickAsync();
-                await page.Locator("div[aria-label='Results header'] ul li").GetByText(brand.Name).WaitForAsync(new LocatorWaitForOptions() { State = WaitForSelectorState.Hidden });
+                await page.Locator($"{pages.ResultHeaderDiv} ul li").GetByText(brand.Name).WaitForAsync(new LocatorWaitForOptions() { State = WaitForSelectorState.Hidden });
             }
 
             return allCreatedModels;
