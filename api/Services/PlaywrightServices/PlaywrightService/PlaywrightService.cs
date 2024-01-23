@@ -63,7 +63,7 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
             await page.GotoAsync(pages.Url);
             await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
 
-            var currnetBrands = await brandService.GetAllBrands();
+            var currnetBrands = await brandService.GetAllBrandsWithModels();
 
             if (refreshForEmptyBrandsOnly)
             {

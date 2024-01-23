@@ -13,9 +13,9 @@ namespace CarMarketAnalysis.Controllers
         IPlaywrightService playwrightService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetBrands([FromQuery] SieveModel query)
+        public async Task<IActionResult> GetBrands()
         {
-            return Ok(await brandService.GetBrands(query));
+            return Ok(await brandService.GetAllBrands());
         }
 
         [HttpGet("{brandId}")]

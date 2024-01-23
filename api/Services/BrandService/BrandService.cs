@@ -46,7 +46,15 @@ namespace CarMarketAnalysis.Services.BrandService
             return brandsStrings;
         }
 
-        public async Task<List<BrandDetailsDto>> GetAllBrands()
+        public async Task<List<BrandDisplayDto>> GetAllBrands()
+        {
+            var brands = await brandRepository.GetAllBrandsIncludeModels();
+            var brandsDto = mapper.Map<List<BrandDisplayDto>>(brands);
+
+            return brandsDto;
+        }
+
+        public async Task<List<BrandDetailsDto>> GetAllBrandsWithModels()
         {
             var brands = await brandRepository.GetAllBrandsIncludeModels();
             var brandsDto = mapper.Map<List<BrandDetailsDto>>(brands);
