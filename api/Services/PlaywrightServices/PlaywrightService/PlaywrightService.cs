@@ -138,6 +138,9 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
             CarCreateDto carCreateDto = new();
 
+            string descriptionString = await page.Locator("div[data-testid='content-description-section']").InnerTextAsync();
+            carCreateDto.Name = $"{descriptionString.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
+
             string priceString = await page.Locator("h3[class*='offer-price__number']").InnerTextAsync();
             carCreateDto.Price = int.Parse(priceString.Replace(" ", ""));
 
@@ -167,9 +170,24 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
             carCreateDto.Localization = await page.Locator("div[data-testid='aside-seller-info'] a[href='#map']").InnerTextAsync();
 
-            carCreateDto.Slug = offerUrl.Substring(22);
+            carCreateDto.Slug = offerUrl.Substring(30);
 
             return carCreateDto;
+        }
+
+        static string ExtractDescriptionFromUrl(string offerUrl)
+        {
+            string trimmedUrl = offerUrl.Replace(offerUrl.Substring(30), "");
+
+            int index = trimmedUrl.IndexOf("-ID");
+            if (index != -1)
+            {
+                trimmedUrl = trimmedUrl.Substring(0, index);
+            }
+
+            string result = trimmedUrl.Replace("-", " ");
+
+            return result;
         }
     }
 }
