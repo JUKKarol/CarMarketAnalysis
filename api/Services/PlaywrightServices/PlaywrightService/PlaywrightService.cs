@@ -170,14 +170,14 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
             carCreateDto.Localization = await page.Locator("div[data-testid='aside-seller-info'] a[href='#map']").InnerTextAsync();
 
-            carCreateDto.Slug = offerUrl.Substring(30);
+            carCreateDto.Slug = offerUrl.Substring(38);
 
             return carCreateDto;
         }
 
         static string ExtractDescriptionFromUrl(string offerUrl)
         {
-            string trimmedUrl = offerUrl.Replace(offerUrl.Substring(30), "");
+            string trimmedUrl = offerUrl.Substring(38);
 
             int index = trimmedUrl.IndexOf("-ID");
             if (index != -1)
