@@ -1,12 +1,17 @@
 ﻿using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.DTOs.BrandDTOs;
+using CarMarketAnalysis.DTOs.CarDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
+using CarMarketAnalysis.Enums;
+using CarMarketAnalysis.Migrations;
 using CarMarketAnalysis.Services.BrandService;
 using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.PlaywrightServices.Pages;
+using HtmlAgilityPack;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Playwright;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 
 namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
@@ -77,7 +82,7 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
                 await page.Locator(pages.FilterBrandDiv).First.ClickAsync();
                 await page.Locator($"{pages.FilterBrandDiv} ul").GetByText(brand.Name).First.ClickAsync();
                 await page.Locator($"{pages.FilterBrandDiv} {pages.ArrowBtn}").ClickAsync();
-                
+
                 await page.Locator($"{pages.ResultHeaderDiv} ul li").GetByText(brand.Name).WaitForAsync();
                 await page.Locator(pages.FilterModelDiv).First.ClickAsync();
                 var modelsUl = await page.Locator($"{pages.FilterModelDiv} ul li").AllTextContentsAsync();
@@ -92,7 +97,7 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
                 var modelsToInsert = modelsTrimmed.Except(currentModels).ToList();
                 List<ModelCreateDto> modelsToInsertDto = modelsToInsert.Select(name => new ModelCreateDto { Name = name, brandId = brand.Id }).ToList();
 
-                if (modelsToInsertDto.Any())
+                if (modelsToInsertDto.Count != 0)
                 {
                     var createdModels = await modelService.CreateModels(modelsToInsertDto);
 
@@ -120,6 +125,51 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
             bool isPagesCountInt = int.TryParse(pagesCountString, out int pagesCount);
 
             return isPagesCountInt ? pagesCount : 0;
+        }
+
+        public async Task<CarCreateDto> ScrapSingleOffer(string offerUrl)
+        {
+            using var playwright = await Playwright.CreateAsync();
+            var browser = await playwright.Chromium.LaunchAsync();
+            var page = await browser.NewPageAsync();
+
+            await page.GotoAsync(offerUrl);
+            await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
+
+            CarCreateDto carCreateDto = new();
+
+            string priceString = await page.Locator("h3[class*='offer-price__number']").InnerTextAsync();
+            carCreateDto.Price = int.Parse(priceString.Replace(" ", ""));
+
+            string currencyString = await page.Locator("p[class*='offer-price__currency']").InnerTextAsync();
+            carCreateDto.Currnecy = Enum.Parse<Currnecy>(currencyString);
+
+            var detalisInfoDivs = await page.Locator("div[data-testid='advert-details-item']").AllAsync();
+            var detalisInfoDivsString = await Task.WhenAll(detalisInfoDivs.Select(async d => await d.TextContentAsync()));
+
+            string bodyTypeDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Typ nadwozia"));
+            carCreateDto.BodyType = Enum.Parse<BodyType>(bodyTypeDiv.Replace("Typ nadwozia", ""));
+
+            string productionYearDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Rok produkcji"));
+            carCreateDto.YearOfProduction = int.Parse(productionYearDiv.Replace("Rok produkcji", ""));
+
+            string mileageDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Przebieg"));
+            carCreateDto.Mileage = int.Parse(Regex.Replace(mileageDiv, "[^0-9]", ""));
+
+            string engineSizeDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Pojemność skokowa"));
+            carCreateDto.EngineSize = int.Parse(Regex.Replace(engineSizeDiv.Substring(0, engineSizeDiv.Length - 1), "[^0-9]", ""));
+
+            string horsePowerDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Moc"));
+            carCreateDto.HorsePower = int.Parse(Regex.Replace(horsePowerDiv, "[^0-9]", ""));
+
+            string transmissionDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Skrzynia biegów"));
+            carCreateDto.AutomaticTransmission = (transmissionDiv.Substring(15) == "Automatyczna");
+
+            carCreateDto.Localization = await page.Locator("div[data-testid='aside-seller-info'] a[href='#map']").InnerTextAsync();
+
+            carCreateDto.Slug = offerUrl.Substring(22);
+
+            return carCreateDto;
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using CarMarketAnalysis.DTOs.ModelDTOs;
+﻿using CarMarketAnalysis.DTOs.CarDTOs;
+using CarMarketAnalysis.DTOs.ModelDTOs;
 
 namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 {
@@ -7,5 +8,6 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
         Task<List<string>> RefreshBrands();
         Task<List<ModelDisplayDto>> RefreshModels(bool refreshForEmptyBrandsOnly);
         Task<int> GetPagesCount();
+        Task<CarCreateDto> ScrapSingleOffer(string offerUrl);
     }
 }
