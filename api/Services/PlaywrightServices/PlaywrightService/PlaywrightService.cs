@@ -138,17 +138,37 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
             CarCreateDto carCreateDto = new();
 
+            if (await page.Locator("div[data-testid='content-description-section'] > div > div > button").IsVisibleAsync())
+            {
+                await page.Locator("div[data-testid='content-description-section'] > div > div > button").ClickAsync();
+            }
+
             string descriptionString = await page.Locator("div[data-testid='content-description-section']").InnerTextAsync();
             carCreateDto.Name = $"{descriptionString.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
 
-            string priceString = await page.Locator("h3[class*='offer-price__number']").InnerTextAsync();
+            string priceString = await page.Locator("h3[class*='offer-price__number']").First.InnerTextAsync();
             carCreateDto.Price = int.Parse(priceString.Replace(" ", ""));
 
-            string currencyString = await page.Locator("p[class*='offer-price__currency']").InnerTextAsync();
+            string currencyString = await page.Locator("p[class*='offer-price__currency']").First.InnerTextAsync();
             carCreateDto.Currnecy = Enum.Parse<Currnecy>(currencyString);
 
             var detalisInfoDivs = await page.Locator("div[data-testid='advert-details-item']").AllAsync();
             var detalisInfoDivsString = await Task.WhenAll(detalisInfoDivs.Select(async d => await d.TextContentAsync()));
+
+            string brandDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Marka pojazdu"));
+            string brandString = brandDiv.Replace("Marka pojazdu", "");
+
+            string modelDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Model pojazdu"));
+            string modelString = modelDiv.Replace("Model pojazdu", "");
+
+            var model = await modelService.GetModelByNameAndBrandName(modelString, brandString);
+
+            if (model == null)
+            {
+                return new CarCreateDto();
+            }
+
+            carCreateDto.ModelId = model.Id;
 
             string bodyTypeDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Typ nadwozia"));
             carCreateDto.BodyType = Enum.Parse<BodyType>(bodyTypeDiv.Replace("Typ nadwozia", ""));
@@ -171,6 +191,15 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
             carCreateDto.Localization = await page.Locator("div[data-testid='aside-seller-info'] a[href='#map']").InnerTextAsync();
 
             carCreateDto.Slug = offerUrl.Substring(38);
+
+            var equipmentInfoDivs = await page.Locator("div[data-testid='accordion-collapse-inner-content'] > div").AllInnerTextsAsync();
+            foreach (var div in equipmentInfoDivs)
+            {
+
+            }
+
+
+
 
             return carCreateDto;
         }

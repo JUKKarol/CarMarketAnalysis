@@ -16,6 +16,13 @@ namespace CarMarketAnalysis.Data.Repositories.ModelRepository
                 .FirstOrDefaultAsync(m => m.Id == modelId);
         }
 
+        public async Task<Model> GetModelByNameAndBrandId(Guid brandId, string modelName)
+        {
+            return await db.Models
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.Name == modelName && m.BrandId == brandId);
+        }
+
         public async Task<List<Model>> GetModels(SieveModel query)
         {
             var models = db
