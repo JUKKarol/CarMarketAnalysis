@@ -7,7 +7,7 @@ namespace CarMarketAnalysis.Entities
         public Guid Id { get; set; } = Guid.NewGuid();
         public string Name { get; set; }
         public int Price { get; set; }
-        public Currnecy Currnecy { get; set; } = Currnecy.PLN;
+        public Currency Currnecy { get; set; } = Currency.PLN;
         public BodyType BodyType { get; set; } = BodyType.None;
         public int YearOfProduction { get; set; }
         public int Mileage { get; set; }

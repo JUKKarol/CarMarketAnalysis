@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarMarketAnalysis.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240120181345_RemoveGeneration")]
-    partial class RemoveGeneration
+    [Migration("20240128200811_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

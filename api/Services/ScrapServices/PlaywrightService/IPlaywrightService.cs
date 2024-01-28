@@ -1,7 +1,7 @@
 ﻿using CarMarketAnalysis.DTOs.CarDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
 
-namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
+namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
 {
     public interface IPlaywrightService
     {

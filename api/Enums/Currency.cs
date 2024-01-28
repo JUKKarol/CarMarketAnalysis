@@ -1,6 +1,6 @@
 ﻿namespace CarMarketAnalysis.Enums
 {
-    public enum Currnecy
+    public enum Currency
     {
         None = 0,
         PLN = 1,

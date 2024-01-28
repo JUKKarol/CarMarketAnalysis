@@ -8,7 +8,7 @@ namespace CarMarketAnalysis.DTOs.CarDTOs
         public Guid Id { get; set; }
         public string Name { get; set; }
         public int Price { get; set; }
-        public Currnecy Currnecy { get; set; }
+        public Currency Currnecy { get; set; }
         public BodyType BodyType { get; set; }
         public int YearOfProduction { get; set; }
         public int Mileage { get; set; }

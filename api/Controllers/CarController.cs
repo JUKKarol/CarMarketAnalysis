@@ -1,5 +1,5 @@
 ﻿using CarMarketAnalysis.Services.ModelService;
-using CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService;
+using CarMarketAnalysis.Services.ScrapServices.PlaywrightService;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
 

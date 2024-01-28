@@ -1,4 +1,4 @@
-﻿namespace CarMarketAnalysis.Services.PlaywrightServices.Pages
+﻿namespace CarMarketAnalysis.Services.ScrapServices.Pages
 {
     public class Pages : IPages
     {

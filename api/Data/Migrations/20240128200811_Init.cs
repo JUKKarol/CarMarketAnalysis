@@ -43,25 +43,6 @@ namespace CarMarketAnalysis.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Generations",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Generations", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Generations_Models_ModelId",
-                        column: x => x.ModelId,
-                        principalTable: "Models",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Cars",
                 columns: table => new
                 {
@@ -89,27 +70,22 @@ namespace CarMarketAnalysis.Migrations
                     MultifunctionWheel = table.Column<bool>(type: "bit", nullable: false),
                     HeatedWheel = table.Column<bool>(type: "bit", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    GenerationId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    ModelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Cars", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Cars_Generations_GenerationId",
-                        column: x => x.GenerationId,
-                        principalTable: "Generations",
+                        name: "FK_Cars_Models_ModelId",
+                        column: x => x.ModelId,
+                        principalTable: "Models",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Cars_GenerationId",
+                name: "IX_Cars_ModelId",
                 table: "Cars",
-                column: "GenerationId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Generations_ModelId",
-                table: "Generations",
                 column: "ModelId");
 
             migrationBuilder.CreateIndex(
@@ -123,9 +99,6 @@ namespace CarMarketAnalysis.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Cars");
-
-            migrationBuilder.DropTable(
-                name: "Generations");
 
             migrationBuilder.DropTable(
                 name: "Models");

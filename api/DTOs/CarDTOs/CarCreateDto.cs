@@ -6,7 +6,7 @@ namespace CarMarketAnalysis.DTOs.CarDTOs
     {
         public string Name { get; set; }
         public int Price { get; set; }
-        public Currnecy Currnecy { get; set; } = Currnecy.PLN;
+        public Currency Currency { get; set; } = Currency.PLN;
         public BodyType BodyType { get; set; } = BodyType.None;
         public int YearOfProduction { get; set; }
         public int Mileage { get; set; }

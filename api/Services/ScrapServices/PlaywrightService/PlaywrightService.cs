@@ -3,18 +3,14 @@ using CarMarketAnalysis.DTOs.BrandDTOs;
 using CarMarketAnalysis.DTOs.CarDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
 using CarMarketAnalysis.Enums;
-using CarMarketAnalysis.Migrations;
 using CarMarketAnalysis.Services.BrandService;
 using CarMarketAnalysis.Services.ModelService;
-using CarMarketAnalysis.Services.PlaywrightServices.Pages;
+using CarMarketAnalysis.Services.ScrapServices.Pages;
 using HtmlAgilityPack;
-using Microsoft.AspNetCore.Routing;
 using Microsoft.Playwright;
-using System.Linq;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.RegularExpressions;
 
-namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
+namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
 {
     public class PlaywrightService(
         IBrandService brandService,
@@ -129,42 +125,34 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
         public async Task<CarCreateDto> ScrapSingleOffer(string offerUrl)
         {
-            using var playwright = await Playwright.CreateAsync();
-            var browser = await playwright.Chromium.LaunchAsync();
-            var page = await browser.NewPageAsync();
-
-            await page.GotoAsync(offerUrl);
-            await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
+            var web = new HtmlWeb();
+            var doc = await web.LoadFromWebAsync(offerUrl);
 
             CarCreateDto carCreateDto = new();
 
-            if (await page.Locator("div[data-testid='content-description-section'] > div > div > button").IsVisibleAsync())
-            {
-                await page.Locator("div[data-testid='content-description-section'] > div > div > button").ClickAsync();
-            }
+            var descriptionSection = doc.DocumentNode.Descendants("div")
+                .FirstOrDefault(node => node.GetAttributeValue("data-testid", "") == "content-description-section");
+            carCreateDto.Name = $"{descriptionSection.InnerText.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
 
-            string descriptionString = await page.Locator("div[data-testid='content-description-section']").InnerTextAsync();
-            carCreateDto.Name = $"{descriptionString.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
+            var priceNode = doc.DocumentNode.Descendants("h3")
+                .First(node => node.GetAttributeValue("class", "").Contains("offer-price__number"));
+            carCreateDto.Price = int.Parse(priceNode.InnerText.Replace(" ", ""));
 
-            string priceString = await page.Locator("h3[class*='offer-price__number']").First.InnerTextAsync();
-            carCreateDto.Price = int.Parse(priceString.Replace(" ", ""));
+            var currencyNode = doc.DocumentNode.Descendants("p")
+                .First(node => node.GetAttributeValue("class", "").Contains("offer-price__currency"));
+            carCreateDto.Currency = Enum.Parse<Currency>(currencyNode.InnerText.Trim());
 
-            string currencyString = await page.Locator("p[class*='offer-price__currency']").First.InnerTextAsync();
-            carCreateDto.Currnecy = Enum.Parse<Currnecy>(currencyString);
+            var detailsNodes = doc.DocumentNode.Descendants("div")
+                .Where(node => node.GetAttributeValue("data-testid", "") == "advert-details-item")
+                .ToList();
+            var detailsStrings = detailsNodes.Select(node => node.InnerText.Trim()).ToList();
 
-            var detalisInfoDivs = await page.Locator("div[data-testid='advert-details-item']").AllAsync();
-            var detalisInfoDivsString = await Task.WhenAll(detalisInfoDivs.Select(async d => await d.TextContentAsync()));
-
-            string brandDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Marka pojazdu"));
-            string brandString = brandDiv.Replace("Marka pojazdu", "");
-
-            string modelDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Model pojazdu"));
-            string modelString = modelDiv.Replace("Model pojazdu", "");
-
+            string brandString = detailsStrings.FirstOrDefault(d => d.Contains("Marka pojazdu"))?.Replace("Marka pojazdu", "").Trim();
+            string modelString = detailsStrings.FirstOrDefault(d => d.Contains("Model pojazdu"))?.Replace("Model pojazdu", "").Trim();
             var model = await modelService.GetModelByNameAndBrandName(modelString, brandString);
             carCreateDto.ModelId = model.Id;
 
-            string fuelTypeDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Rodzaj paliwa"));
+            string fuelTypeDiv = detailsStrings.FirstOrDefault(d => d.Contains("Rodzaj paliwa"));
             string fuelTypeString = fuelTypeDiv.Replace("Rodzaj paliwa", "").Trim();
 
             var fuelTypeMapping = new Dictionary<string, FuelType>
@@ -184,7 +172,7 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
                 carCreateDto.FuelType = fuelType;
             }
 
-            string bodyTypeDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Typ nadwozia"));
+            string bodyTypeDiv = detailsStrings.FirstOrDefault(d => d.Contains("Typ nadwozia"));
             string bodyTypeString = bodyTypeDiv.Replace("Typ nadwozia", "").Trim();
 
             var bodyTypeMapping = new Dictionary<string, BodyType>
@@ -205,27 +193,36 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
                 carCreateDto.BodyType = bodyType;
             }
 
-            string productionYearDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Rok produkcji"));
+            string productionYearDiv = detailsStrings.FirstOrDefault(d => d.Contains("Rok produkcji"));
             carCreateDto.YearOfProduction = int.Parse(productionYearDiv.Replace("Rok produkcji", ""));
 
-            string mileageDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Przebieg"));
+            string mileageDiv = detailsStrings.FirstOrDefault(d => d.Contains("Przebieg"));
             carCreateDto.Mileage = int.Parse(Regex.Replace(mileageDiv, "[^0-9]", ""));
 
-            string engineSizeDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Pojemność skokowa"));
+            string engineSizeDiv = detailsStrings.FirstOrDefault(d => d.Contains("Pojemność skokowa"));
             carCreateDto.EngineSize = int.Parse(Regex.Replace(engineSizeDiv.Substring(0, engineSizeDiv.Length - 1), "[^0-9]", ""));
 
-            string horsePowerDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Moc"));
+            string horsePowerDiv = detailsStrings.FirstOrDefault(d => d.Contains("Moc"));
             carCreateDto.HorsePower = int.Parse(Regex.Replace(horsePowerDiv, "[^0-9]", ""));
 
-            string transmissionDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Skrzynia biegów"));
+            string transmissionDiv = detailsStrings.FirstOrDefault(d => d.Contains("Skrzynia biegów"));
             carCreateDto.AutomaticTransmission = (transmissionDiv.Substring(15) == "Automatyczna");
 
-            carCreateDto.Localization = await page.Locator("div[data-testid='aside-seller-info'] a[href='#map']").InnerTextAsync();
+            var localizationNode = doc.DocumentNode.Descendants("div")
+                .FirstOrDefault(node => node.GetAttributeValue("data-testid", "") == "aside-seller-info")
+                ?.Descendants("a")
+                .FirstOrDefault(a => a.GetAttributeValue("href", "") == "#map");
+
+            carCreateDto.Localization = localizationNode?.InnerText.Trim();
 
             carCreateDto.Slug = offerUrl.Substring(38);
 
-
-            var equipmentInfoDivs = await page.Locator("div[data-testid='accordion-collapse-inner-content'] > div").AllInnerTextsAsync();
+            var equipmentInfoDivs = doc.DocumentNode
+                .Descendants("div")
+                .Where(node => node.GetAttributeValue("data-testid", "") == "accordion-collapse-inner-content")
+                .SelectMany(node => node.Descendants("div"))
+                .Select(node => node.InnerText.Trim())
+                .ToList();
 
             var equipmentMapping = new Dictionary<string, Action<CarCreateDto>>()
             {
@@ -248,7 +245,6 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
                     mapping.Value(carCreateDto);
                 }
             }
-
 
             return carCreateDto;
         }
