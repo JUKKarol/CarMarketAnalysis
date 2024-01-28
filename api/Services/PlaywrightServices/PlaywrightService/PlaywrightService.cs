@@ -162,16 +162,48 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
             string modelString = modelDiv.Replace("Model pojazdu", "");
 
             var model = await modelService.GetModelByNameAndBrandName(modelString, brandString);
-
-            if (model == null)
-            {
-                return new CarCreateDto();
-            }
-
             carCreateDto.ModelId = model.Id;
 
+            string fuelTypeDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Rodzaj paliwa"));
+            string fuelTypeString = fuelTypeDiv.Replace("Rodzaj paliwa", "").Trim();
+
+            var fuelTypeMapping = new Dictionary<string, FuelType>
+            {
+                { "Benzyna", FuelType.Gasoline },
+                { "Benzyna+LPG", FuelType.GasolineLPG },
+                { "Benzyna+CNG", FuelType.GasolineCNG },
+                { "Diesel", FuelType.Diesel },
+                { "Elektryczny", FuelType.Electric },
+                { "Etanol", FuelType.Ethanol },
+                { "Hybryda", FuelType.Hybrid },
+                { "Wodór", FuelType.Hydrogen },
+            };
+
+            if (fuelTypeMapping.TryGetValue(fuelTypeString, out FuelType fuelType))
+            {
+                carCreateDto.FuelType = fuelType;
+            }
+
             string bodyTypeDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Typ nadwozia"));
-            carCreateDto.BodyType = Enum.Parse<BodyType>(bodyTypeDiv.Replace("Typ nadwozia", ""));
+            string bodyTypeString = bodyTypeDiv.Replace("Typ nadwozia", "").Trim();
+
+            var bodyTypeMapping = new Dictionary<string, BodyType>
+            {
+                { "Auta małe", BodyType.SmallCar },
+                { "Auta miejskie", BodyType.UrbanCar },
+                { "Coupe", BodyType.Coupe },
+                { "Kabriolet", BodyType.Cabriolet },
+                { "Kombi", BodyType.Combi },
+                { "Kompakt", BodyType.Compact },
+                { "Minivan", BodyType.Minivan },
+                { "Sedan", BodyType.Sedan },
+                { "SUV", BodyType.SUV },
+            };
+
+            if (bodyTypeMapping.TryGetValue(bodyTypeString, out BodyType bodyType))
+            {
+                carCreateDto.BodyType = bodyType;
+            }
 
             string productionYearDiv = detalisInfoDivsString.FirstOrDefault(d => d.Contains("Rok produkcji"));
             carCreateDto.YearOfProduction = int.Parse(productionYearDiv.Replace("Rok produkcji", ""));
@@ -192,13 +224,30 @@ namespace CarMarketAnalysis.Services.PlaywrightServices.PlaywrightService
 
             carCreateDto.Slug = offerUrl.Substring(38);
 
+
             var equipmentInfoDivs = await page.Locator("div[data-testid='accordion-collapse-inner-content'] > div").AllInnerTextsAsync();
-            foreach (var div in equipmentInfoDivs)
+
+            var equipmentMapping = new Dictionary<string, Action<CarCreateDto>>()
             {
+                { "Elektrycznie ustawiany fotel", dto => dto.ElectricSeat = true },
+                { "Podgrzewany fotel", dto => dto.HeatedSeats = true },
+                { "Ogrzewane siedzenia tylne", dto => dto.HeatedBackSeats = true },
+                { "masaż", dto => dto.MassagedSeats = true },
+                { "Elektryczne szyby tylne", dto => dto.FullElectricWindows = true },
+                { "Bluetooth", dto => dto.Bluetooth = true },
+                { "Kontrola trakcji", dto => dto.CruiseControl = true },
+                { "park", dto => dto.Parktronic = true },
+                { "Kierownica wielofunkcyjna", dto => dto.MultifunctionWheel = true },
+                { "Kierownica ogrzewana", dto => dto.HeatedWheel = true },
+            };
 
+            foreach (var mapping in equipmentMapping)
+            {
+                if (equipmentInfoDivs.Any(d => d.Contains(mapping.Key)))
+                {
+                    mapping.Value(carCreateDto);
+                }
             }
-
-
 
 
             return carCreateDto;
