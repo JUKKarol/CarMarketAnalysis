@@ -9,7 +9,7 @@ services:
   depends_on:
    - sqldata
   environment:
-    ConnectionStrings__DefaultConnection: "Server=sqldata;Database=CarMarketAnalysisDb;User Id=sa;Password=CarMarketAnalysis@;TrustServerCertificate=True"
+    AppSettings__ConnectionStrings__DefaultConnection: "Server=sqldata;Database=CarMarketAnalysisDb;User Id=sa;Password=CarMarketAnalysis@;TrustServerCertificate=True"
  sqldata:
     image: mcr.microsoft.com/mssql/server:2022-latest
     environment:
