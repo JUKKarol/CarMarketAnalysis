@@ -74,15 +74,15 @@ namespace CarMarketAnalysis
                 dbContext.Database.Migrate();
             }
 
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 var seeder = new Seeder(dbContext);
                 int recordsToSeed = 10;
                 seeder.Seed(recordsToSeed);
 
                 app.UseSwagger();
                 app.UseSwaggerUI();
-            }
+            //}
 
             app.UseHttpsRedirection();
 
