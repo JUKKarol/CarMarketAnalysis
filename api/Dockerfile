@@ -18,7 +18,7 @@ WORKDIR /app/api
 COPY --from=build-env /app/api/out .
 
 # Copy the appsettings.json file
-COPY api/appsettings.json .
+# COPY api/appsettings.json .
 
 # Set the entry point for the container
 ENTRYPOINT ["dotnet", "CarMarketAnalysis.dll"]
