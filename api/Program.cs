@@ -89,6 +89,8 @@ namespace CarMarketAnalysis
                 app.UseSwaggerUI();
             //}
 
+            app.UseCors();
+
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
