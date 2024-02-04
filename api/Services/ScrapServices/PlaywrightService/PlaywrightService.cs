@@ -132,7 +132,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
 
             var descriptionSection = doc.DocumentNode.Descendants("div")
                 .FirstOrDefault(node => node.GetAttributeValue("data-testid", "") == "content-description-section");
-            carCreateDto.Name = $"{descriptionSection.InnerText.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
+            carCreateDto.Name = $"{descriptionSection?.InnerText.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
 
             var priceNode = doc.DocumentNode.Descendants("h3")
                 .First(node => node.GetAttributeValue("class", "").Contains("offer-price__number"));
@@ -247,6 +247,37 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             }
 
             return carCreateDto;
+        }
+
+        public async Task<List<CarCreateDto>> CompareOffers(string firstOfferUrl, string secondOfferUrl)
+        {
+            List<CarCreateDto> offers = [await ScrapSingleOffer(firstOfferUrl), await ScrapSingleOffer(secondOfferUrl)];
+            
+            return offers;
+        }
+
+        public async Task<List<CarCreateDto>> ScrapSinglePage(string pageUrl)
+        {
+            var web = new HtmlWeb();
+            var doc = await web.LoadFromWebAsync(pageUrl);
+
+            CarCreateDto carCreateDto = new();
+
+            var allOffersLinks = doc.DocumentNode
+                .Descendants("h1")
+                .SelectMany(h1 => h1.Descendants("a"))
+                .Select(a => a.GetAttributeValue("href", ""))
+                .ToList();
+
+
+            List<CarCreateDto> offers = new();
+
+            foreach (var offerLink in allOffersLinks)
+            {
+                offers.Add(await ScrapSingleOffer(offerLink));
+            }
+
+            return offers;
         }
 
         static string ExtractDescriptionFromUrl(string offerUrl)

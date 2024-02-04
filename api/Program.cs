@@ -34,6 +34,11 @@ namespace CarMarketAnalysis
                 options.UseSqlServer(settings.ConnectionStrings.DefaultConnection);
             });
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
+
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
