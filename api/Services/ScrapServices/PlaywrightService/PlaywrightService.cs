@@ -150,6 +150,10 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             string brandString = detailsStrings.FirstOrDefault(d => d.Contains("Marka pojazdu"))?.Replace("Marka pojazdu", "").Trim();
             string modelString = detailsStrings.FirstOrDefault(d => d.Contains("Model pojazdu"))?.Replace("Model pojazdu", "").Trim();
             var model = await modelService.GetModelByNameAndBrandName(modelString, brandString);
+            if (model == null)
+            {
+                return new CarCreateDto();
+            }
             carCreateDto.ModelId = model.Id;
 
             string fuelTypeDiv = detailsStrings.FirstOrDefault(d => d.Contains("Rodzaj paliwa"));
