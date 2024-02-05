@@ -17,6 +17,19 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app/api
 COPY --from=build-env /app/api/out .
 
+#Install powershell to playwright scripts
+RUN apt-get update -yq \
+    && apt-get install wget -yq \
+    && wget -q https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb \
+    && dpkg -i packages-microsoft-prod.deb \
+    && apt-get update -yq \
+    && apt-get install powershell -yq
+    
+#Install playwright dependencies
+RUN pwsh ./playwright.ps1 install
+RUN pwsh ./playwright.ps1 install chromium
+RUN pwsh ./playwright.ps1 install-deps chromium
+
 # Copy the appsettings.json file
 # COPY api/appsettings.json .
 
