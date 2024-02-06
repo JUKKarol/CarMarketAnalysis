@@ -5,6 +5,7 @@ namespace CarMarketAnalysis.DTOs.CarDTOs
     public class CarCreateDto
     {
         public string Name { get; set; }
+        public string NameForSearch { get; set; }
         public int Price { get; set; }
         public Currency Currency { get; set; } = Currency.PLN;
         public BodyType BodyType { get; set; } = BodyType.None;

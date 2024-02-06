@@ -130,9 +130,11 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
 
             CarCreateDto carCreateDto = new();
 
+            carCreateDto.Name = ExtractDescriptionFromUrl(offerUrl);
+
             var descriptionSection = doc.DocumentNode.Descendants("div")
                 .FirstOrDefault(node => node.GetAttributeValue("data-testid", "") == "content-description-section");
-            carCreateDto.Name = $"{descriptionSection?.InnerText.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
+            carCreateDto.NameForSearch = $"{descriptionSection?.InnerText.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
 
             var priceNode = doc.DocumentNode.Descendants("h3")
                 .First(node => node.GetAttributeValue("class", "").Contains("offer-price__number"));
@@ -256,7 +258,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
         public async Task<List<CarCreateDto>> CompareOffers(string firstOfferUrl, string secondOfferUrl)
         {
             List<CarCreateDto> offers = [await ScrapSingleOffer(firstOfferUrl), await ScrapSingleOffer(secondOfferUrl)];
-            
+
             return offers;
         }
 
