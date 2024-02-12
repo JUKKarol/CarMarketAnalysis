@@ -42,6 +42,10 @@ namespace CarMarketAnalysis
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen(options =>
             {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                });
+
                 options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                 {
                     In = ParameterLocation.Header,
@@ -70,6 +74,22 @@ namespace CarMarketAnalysis
 
 
             var app = builder.Build();
+            app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(options =>
+            {
+                options.SwaggerEndpoint("/swagger/v1/swagger.json", "Web API V1");
+
+                if (app.Environment.IsDevelopment())
+                {
+                    options.RoutePrefix = "swagger";
+                }
+                else
+                {
+                    options.RoutePrefix = string.Empty;
+                }
+            });
+
             var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetService<DatabaseContext>();
 
