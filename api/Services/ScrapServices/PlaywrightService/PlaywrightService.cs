@@ -255,13 +255,6 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             return carCreateDto;
         }
 
-        public async Task<List<CarCreateDto>> CompareOffers(string firstOfferUrl, string secondOfferUrl)
-        {
-            List<CarCreateDto> offers = [await ScrapSingleOffer(firstOfferUrl), await ScrapSingleOffer(secondOfferUrl)];
-
-            return offers;
-        }
-
         public async Task<List<CarCreateDto>> ScrapSinglePage(string pageUrl)
         {
             var web = new HtmlWeb();

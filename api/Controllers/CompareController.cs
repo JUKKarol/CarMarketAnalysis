@@ -8,9 +8,9 @@ namespace CarMarketAnalysis.Controllers
     public class CompareController(IPlaywrightService playwrightService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetOffer(string firstUrl, string secondUrl)
+        public async Task<IActionResult> GetOffer(string Url)
         {
-            return Ok(await playwrightService.CompareOffers(firstUrl, secondUrl));
+            return Ok(await playwrightService.ScrapSinglePage(Url));
         }
     }
 }
