@@ -30,5 +30,13 @@ namespace CarMarketAnalysis.Services.CarService
             respondListDto.PagesCount = (int)Math.Ceiling((double)respondListDto.ItemsCount / pageSize);
             return respondListDto;
         }
+
+        public async Task<List<CarDisplayDto>> CreateCars(List<CarCreateDto> carsDto)
+        {
+            var cars = mapper.Map<List<Car>>(carsDto);
+            var createdCars = mapper.Map<List<CarDisplayDto>>(await carRepository.CreateCars(cars));
+
+            return createdCars;
+        }
     }
 }
