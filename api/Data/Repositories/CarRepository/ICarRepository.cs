@@ -9,6 +9,7 @@ namespace CarMarketAnalysis.Data.Repositories.CarRepository
         Task<List<Car>> GetCars(SieveModel query);
         Task<int> GetCarsCount(SieveModel query);
         Task<Car> CreateCar(Car car);
+        Task<List<Car>> CreateCars(List<Car> cars);
         Task<Car> UpdateCar(Car updatedCar);
     }
 }

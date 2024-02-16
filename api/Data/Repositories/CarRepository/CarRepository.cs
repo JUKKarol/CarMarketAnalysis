@@ -50,6 +50,14 @@ namespace CarMarketAnalysis.Data.Repositories.CarRepository
             return car;
         }
 
+        public async Task<List<Car>> CreateCars(List<Car> cars)
+        {
+            await db.AddRangeAsync(cars);
+            await db.SaveChangesAsync();
+
+            return cars;
+        }
+
         public async Task<Car> UpdateCar(Car updatedCar)
         {
             var car = await db.Cars
