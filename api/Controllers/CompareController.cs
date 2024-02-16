@@ -10,7 +10,7 @@ namespace CarMarketAnalysis.Controllers
         [HttpGet]
         public async Task<IActionResult> GetOffer(string Url)
         {
-            return Ok(await playwrightService.ScrapSinglePage(Url));
+            return Ok(await playwrightService.ScrapAllPages(Url));
         }
     }
 }

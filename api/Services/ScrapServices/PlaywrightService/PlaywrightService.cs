@@ -8,6 +8,9 @@ using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.ScrapServices.Pages;
 using HtmlAgilityPack;
 using Microsoft.Playwright;
+using System.Collections.Generic;
+using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
@@ -17,18 +20,6 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
         IModelService modelService,
         IPages pages) : IPlaywrightService
     {
-        private async Task<IPage> CreatePage()
-        {
-            using var playwright = await Playwright.CreateAsync();
-            var browser = await playwright.Chromium.LaunchAsync();
-            var page = await browser.NewPageAsync();
-
-            await page.GotoAsync(pages.Url);
-            await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
-
-            return page;
-        }
-
         public async Task<List<string>> RefreshBrands()
         {
             using var playwright = await Playwright.CreateAsync();
@@ -108,16 +99,18 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             return allCreatedModels;
         }
 
-        public async Task<int> GetPagesCount()
+        public async Task<int> GetPagesCount(string url)
         {
-            using var playwright = await Playwright.CreateAsync();
-            var browser = await playwright.Chromium.LaunchAsync();
-            var page = await browser.NewPageAsync();
+            var web = new HtmlWeb();
+            var doc = await web.LoadFromWebAsync(url);
 
-            await page.GotoAsync(pages.Url);
-            await page.Locator(pages.AcceptCookiesBtn).ClickAsync();
+            var pagesCountString = doc.DocumentNode
+                .Descendants("ul")
+                .FirstOrDefault(d => d.GetAttributeValue("class", "").Contains("pagination-list"))
+                ?.Descendants("li")
+                .Where(li => li.GetAttributeValue("data-testid", "") == "pagination-list-item")
+                ?.LastOrDefault()?.InnerText;
 
-            var pagesCountString = await page.Locator("ul[class*='pagination-list'] li[data-testid='pagination-list-item']").Last.InnerTextAsync();
             bool isPagesCountInt = int.TryParse(pagesCountString, out int pagesCount);
 
             return isPagesCountInt ? pagesCount : 0;
@@ -127,8 +120,6 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
         {
             try
             {
-
-
                 var web = new HtmlWeb();
                 var doc = await web.LoadFromWebAsync(offerUrl);
 
@@ -259,9 +250,9 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
                 return carCreateDto;
 
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                return new CarCreateDto { Slug = offerUrl };
             }
         }
 
@@ -279,14 +270,34 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
                 .ToList();
 
 
-            List<CarCreateDto> offers = new();
+            List<CarCreateDto> offers = [];
 
             foreach (var offerLink in allOffersLinks)
             {
                 offers.Add(await ScrapSingleOffer(offerLink));
             }
 
+            offers.OrderBy(c => c.Price);
             return offers;
+        }
+
+        public async Task<List<CarCreateDto>> ScrapAllPages(string firstPageUrl = "")
+        {
+            if (firstPageUrl == string.Empty)
+            {
+                firstPageUrl = pages.Url;
+            }
+
+            int pagesCount = await GetPagesCount(firstPageUrl);
+            List<CarCreateDto> cars = [];
+
+            for (int i = 0; i < pagesCount; i++)
+            {
+                var currentPage = await ScrapSinglePage($"{firstPageUrl}?page={i + 1}");
+                cars.AddRange(currentPage);
+            }
+
+            return cars;
         }
 
         static string ExtractDescriptionFromUrl(string offerUrl)
