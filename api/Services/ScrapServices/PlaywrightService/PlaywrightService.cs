@@ -4,6 +4,7 @@ using CarMarketAnalysis.DTOs.CarDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
 using CarMarketAnalysis.Enums;
 using CarMarketAnalysis.Services.BrandService;
+using CarMarketAnalysis.Services.CarService;
 using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.ScrapServices.Pages;
 using HtmlAgilityPack;
@@ -18,6 +19,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
     public class PlaywrightService(
         IBrandService brandService,
         IModelService modelService,
+        ICarService carService,
         IPages pages) : IPlaywrightService
     {
         public async Task<List<string>> RefreshBrands()
@@ -276,6 +278,8 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             {
                 offers.Add(await ScrapSingleOffer(offerLink));
             }
+
+            await carService.CreateCars(offers);
 
             offers.OrderBy(c => c.Price);
             return offers;

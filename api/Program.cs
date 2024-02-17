@@ -5,6 +5,7 @@ using CarMarketAnalysis.Data.Repositories.CarRepository;
 using CarMarketAnalysis.Data.Repositories.ModelRepository;
 using CarMarketAnalysis.Data.Seeders;
 using CarMarketAnalysis.Services.BrandService;
+using CarMarketAnalysis.Services.CarService;
 using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.ScrapServices.Pages;
 using CarMarketAnalysis.Services.ScrapServices.PlaywrightService;
@@ -61,6 +62,7 @@ namespace CarMarketAnalysis
 
             builder.Services.AddScoped<IBrandService, BrandService>();
             builder.Services.AddScoped<IModelService, ModelService>();
+            builder.Services.AddScoped<ICarService, CarService>();
             builder.Services.AddScoped<IPlaywrightService, PlaywrightService>();
             builder.Services.AddScoped<IPages, Pages>();
 

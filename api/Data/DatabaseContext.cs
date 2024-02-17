@@ -21,7 +21,8 @@ namespace CarMarketAnalysis.Data
 
                 entity.HasOne(c => c.Model)
                     .WithMany(m => m.Cars)
-                    .HasForeignKey(c => c.ModelId);
+                    .HasForeignKey(c => c.ModelId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             builder.Entity<Brand>(entity => {
@@ -29,7 +30,8 @@ namespace CarMarketAnalysis.Data
 
                 entity.HasMany(c => c.Models)
                     .WithOne(m => m.Brand)
-                    .HasForeignKey(m => m.BrandId);
+                    .HasForeignKey(m => m.BrandId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             builder.Entity<Model>(entity => {
@@ -37,11 +39,13 @@ namespace CarMarketAnalysis.Data
 
                 entity.HasOne(m => m.Brand)
                     .WithMany(b => b.Models)
-                    .HasForeignKey(m => m.BrandId);
+                    .HasForeignKey(m => m.BrandId)
+                    .OnDelete(DeleteBehavior.SetNull);
 
                 entity.HasMany(m => m.Cars)
                     .WithOne(c => c.Model)
-                    .HasForeignKey(c => c.ModelId);
+                    .HasForeignKey(c => c.ModelId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             base.OnModelCreating(builder);
