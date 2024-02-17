@@ -34,7 +34,8 @@ namespace CarMarketAnalysis.Services.CarService
         public async Task<List<CarDisplayDto>> CreateCars(List<CarCreateDto> carsDto)
         {
             var cars = mapper.Map<List<Car>>(carsDto);
-            var createdCars = mapper.Map<List<CarDisplayDto>>(await carRepository.CreateCars(cars));
+            var carsWithoutNulls = cars.Where(c => c.ModelId != Guid.Empty).ToList();
+            var createdCars = mapper.Map<List<CarDisplayDto>>(await carRepository.CreateCars(carsWithoutNulls));
 
             return createdCars;
         }
