@@ -258,7 +258,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             }
         }
 
-        public async Task<List<CarCreateDto>> ScrapSinglePage(string pageUrl)
+        public async Task<List<CarDisplayDto>> ScrapSinglePage(string pageUrl)
         {
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(pageUrl);
@@ -279,10 +279,9 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
                 offers.Add(await ScrapSingleOffer(offerLink));
             }
 
-            await carService.CreateCars(offers);
+            var createdOffers = await carService.CreateCars(offers);
 
-            offers.OrderBy(c => c.Price);
-            return offers;
+            return createdOffers;
         }
 
         public async Task<List<CarCreateDto>> ScrapAllPages(string firstPageUrl = "")

@@ -9,7 +9,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
         Task<List<ModelDisplayDto>> RefreshModels(bool refreshForEmptyBrandsOnly);
         Task<int> GetPagesCount(string url);
         Task<CarCreateDto> ScrapSingleOffer(string offerUrl);
-        Task<List<CarCreateDto>> ScrapSinglePage(string pageUrl);
+        Task<List<CarDisplayDto>> ScrapSinglePage(string pageUrl);
         Task<List<CarCreateDto>> ScrapAllPages(string firstPageUrl);
     }
 }
