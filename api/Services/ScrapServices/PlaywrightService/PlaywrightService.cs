@@ -284,7 +284,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             return createdOffers;
         }
 
-        public async Task<List<CarCreateDto>> ScrapAllPages(string firstPageUrl = "")
+        public async Task<List<CarDisplayDto>> ScrapAllPages(string firstPageUrl = "")
         {
             if (firstPageUrl == string.Empty)
             {
@@ -292,7 +292,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             }
 
             int pagesCount = await GetPagesCount(firstPageUrl);
-            List<CarCreateDto> cars = [];
+            List<CarDisplayDto> cars = [];
 
             for (int i = 0; i < pagesCount; i++)
             {

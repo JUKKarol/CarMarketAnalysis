@@ -58,6 +58,22 @@ namespace CarMarketAnalysis.Data.Repositories.CarRepository
             return cars;
         }
 
+        public async Task<List<Car>> RemoveExistingCarsCreatedWithin5Days(List<Car> cars)
+        {
+            var existingSlugs = await db.Cars
+                .Where(c => cars.Select(car => car.Slug).Contains(c.Slug))
+                .ToListAsync();
+
+            var slugsToDelete = existingSlugs
+                .Where(c => (DateTime.UtcNow - c.CreatedAt).TotalDays <= 5)
+                .Select(c => c.Slug)
+                .ToList();
+
+            cars.RemoveAll(car => slugsToDelete.Contains(car.Slug));
+
+            return cars;
+        }
+
         public async Task<Car> UpdateCar(Car updatedCar)
         {
             var car = await db.Cars
