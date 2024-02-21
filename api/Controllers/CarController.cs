@@ -9,7 +9,13 @@ namespace CarMarketAnalysis.Controllers
     [ApiController]
     public class CarController(IPlaywrightService playwrightService) : ControllerBase
     {
-        [HttpGet("single")]
+        [HttpGet("offer")]
+        public async Task<IActionResult> ScrapSingleOffer(string url)
+        {
+            return Ok(await playwrightService.ScrapSingleOffer(url));
+        }
+
+        [HttpGet("page")]
         public async Task<IActionResult> ScrapSinglePage(string url)
         {
             return Ok(await playwrightService.ScrapSinglePage(url));
