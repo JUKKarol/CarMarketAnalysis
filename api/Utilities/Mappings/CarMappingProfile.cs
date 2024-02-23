@@ -11,6 +11,8 @@ namespace CarMarketAnalysis.Utilities.Mappings
             CreateMap<CarDisplayDto, Car>().ReverseMap();
             CreateMap<CarDetailsDto, Car>().ReverseMap();
             CreateMap<CarCreateDto, Car>().ReverseMap();
+            CreateMap<CarScrapedDTO, Car>().ReverseMap();
+            CreateMap<CarScrapedDTO, CarCreateDto>().ReverseMap();
         }
     }
 }

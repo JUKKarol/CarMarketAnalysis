@@ -1,4 +1,5 @@
-﻿using CarMarketAnalysis.Data.Repositories.BrandRepository;
+﻿using AutoMapper;
+using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.DTOs.BrandDTOs;
 using CarMarketAnalysis.DTOs.CarDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
@@ -20,6 +21,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
         IBrandService brandService,
         IModelService modelService,
         ICarService carService,
+        IMapper mapper,
         IPages pages) : IPlaywrightService
     {
         public async Task<List<string>> RefreshBrands()
@@ -118,42 +120,37 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             return isPagesCountInt ? pagesCount : 0;
         }
 
-        public async Task<CarCreateDto> ScrapSingleOffer(string offerUrl)
+        public async Task<CarScrapedDTO> ScrapSingleOffer(string offerUrl)
         {
             try
             {
                 var web = new HtmlWeb();
                 var doc = await web.LoadFromWebAsync(offerUrl);
 
-                CarCreateDto carCreateDto = new();
+                CarScrapedDTO carDto = new();
 
-                carCreateDto.Name = ExtractDescriptionFromUrl(offerUrl);
+                carDto.Name = ExtractDescriptionFromUrl(offerUrl);
 
                 var descriptionSection = doc.DocumentNode.Descendants("div")
                     .FirstOrDefault(node => node.GetAttributeValue("data-testid", "") == "content-description-section");
-                carCreateDto.NameForSearch = $"{descriptionSection?.InnerText.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
+                carDto.NameForSearch = $"{descriptionSection?.InnerText.Replace("\n", " ")} {ExtractDescriptionFromUrl(offerUrl)}";
 
                 var priceNode = doc.DocumentNode.Descendants("h3")
                     .First(node => node.GetAttributeValue("class", "").Contains("offer-price__number"));
-                carCreateDto.Price = int.Parse(priceNode.InnerText.Replace(" ", ""));
+                carDto.Price = int.Parse(priceNode.InnerText.Replace(" ", ""));
 
                 var currencyNode = doc.DocumentNode.Descendants("p")
                     .First(node => node.GetAttributeValue("class", "").Contains("offer-price__currency"));
-                carCreateDto.Currency = Enum.Parse<Currency>(currencyNode.InnerText.Trim());
+                carDto.Currency = Enum.Parse<Currency>(currencyNode.InnerText.Trim());
 
                 var detailsNodes = doc.DocumentNode.Descendants("div")
                     .Where(node => node.GetAttributeValue("data-testid", "") == "advert-details-item")
                     .ToList();
                 var detailsStrings = detailsNodes.Select(node => node.InnerText.Trim()).ToList();
 
-                string brandString = detailsStrings.FirstOrDefault(d => d.Contains("Marka pojazdu"))?.Replace("Marka pojazdu", "").Trim();
-                string modelString = detailsStrings.FirstOrDefault(d => d.Contains("Model pojazdu"))?.Replace("Model pojazdu", "").Trim();
-                var model = await modelService.GetModelByNameAndBrandName(modelString, brandString);
-                if (model == null)
-                {
-                    return new CarCreateDto();
-                }
-                carCreateDto.ModelId = model.Id;
+                carDto.BrandString = detailsStrings.FirstOrDefault(d => d.Contains("Marka pojazdu"))?.Replace("Marka pojazdu", "").Trim();
+                carDto.ModelString = detailsStrings.FirstOrDefault(d => d.Contains("Model pojazdu"))?.Replace("Model pojazdu", "").Trim();
+                
 
                 string fuelTypeDiv = detailsStrings.FirstOrDefault(d => d.Contains("Rodzaj paliwa"));
                 string fuelTypeString = fuelTypeDiv.Replace("Rodzaj paliwa", "").Trim();
@@ -172,7 +169,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
 
                 if (fuelTypeMapping.TryGetValue(fuelTypeString, out FuelType fuelType))
                 {
-                    carCreateDto.FuelType = fuelType;
+                    carDto.FuelType = fuelType;
                 }
 
                 string bodyTypeDiv = detailsStrings.FirstOrDefault(d => d.Contains("Typ nadwozia"));
@@ -193,32 +190,32 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
 
                 if (bodyTypeMapping.TryGetValue(bodyTypeString, out BodyType bodyType))
                 {
-                    carCreateDto.BodyType = bodyType;
+                    carDto.BodyType = bodyType;
                 }
 
                 string productionYearDiv = detailsStrings.FirstOrDefault(d => d.Contains("Rok produkcji"));
-                carCreateDto.YearOfProduction = int.Parse(productionYearDiv.Replace("Rok produkcji", ""));
+                carDto.YearOfProduction = int.Parse(productionYearDiv.Replace("Rok produkcji", ""));
 
                 string mileageDiv = detailsStrings.FirstOrDefault(d => d.Contains("Przebieg"));
-                carCreateDto.Mileage = int.Parse(Regex.Replace(mileageDiv, "[^0-9]", ""));
+                carDto.Mileage = int.Parse(Regex.Replace(mileageDiv, "[^0-9]", ""));
 
                 string engineSizeDiv = detailsStrings.FirstOrDefault(d => d.Contains("Pojemność skokowa"));
-                carCreateDto.EngineSize = int.Parse(Regex.Replace(engineSizeDiv.Substring(0, engineSizeDiv.Length - 1), "[^0-9]", ""));
+                carDto.EngineSize = int.Parse(Regex.Replace(engineSizeDiv.Substring(0, engineSizeDiv.Length - 1), "[^0-9]", ""));
 
                 string horsePowerDiv = detailsStrings.FirstOrDefault(d => d.Contains("Moc"));
-                carCreateDto.HorsePower = int.Parse(Regex.Replace(horsePowerDiv, "[^0-9]", ""));
+                carDto.HorsePower = int.Parse(Regex.Replace(horsePowerDiv, "[^0-9]", ""));
 
                 string transmissionDiv = detailsStrings.FirstOrDefault(d => d.Contains("Skrzynia biegów"));
-                carCreateDto.AutomaticTransmission = (transmissionDiv.Substring(15) == "Automatyczna");
+                carDto.AutomaticTransmission = (transmissionDiv.Substring(15) == "Automatyczna");
 
                 var localizationNode = doc.DocumentNode.Descendants("div")
                     .FirstOrDefault(node => node.GetAttributeValue("data-testid", "") == "aside-seller-info")
                     ?.Descendants("a")
                     .FirstOrDefault(a => a.GetAttributeValue("href", "") == "#map");
 
-                carCreateDto.Localization = localizationNode?.InnerText.Trim();
+                carDto.Localization = localizationNode?.InnerText.Trim();
 
-                carCreateDto.Slug = offerUrl.Substring(38);
+                carDto.Slug = offerUrl.Substring(38);
 
                 var equipmentInfoDivs = doc.DocumentNode
                     .Descendants("div")
@@ -227,7 +224,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
                     .Select(node => node.InnerText.Trim())
                     .ToList();
 
-                var equipmentMapping = new Dictionary<string, Action<CarCreateDto>>()
+                var equipmentMapping = new Dictionary<string, Action<CarScrapedDTO>>()
             {
                 { "Elektrycznie ustawiany fotel", dto => dto.ElectricSeat = true },
                 { "Podgrzewany fotel", dto => dto.HeatedSeats = true },
@@ -245,16 +242,15 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
                 {
                     if (equipmentInfoDivs.Any(d => d.Contains(mapping.Key)))
                     {
-                        mapping.Value(carCreateDto);
+                        mapping.Value(carDto);
                     }
                 }
 
-                return carCreateDto;
-
+                return carDto;
             }
             catch (Exception ex)
             {
-                return new CarCreateDto { Slug = offerUrl };
+                return new CarScrapedDTO { Slug = offerUrl };
             }
         }
 
@@ -263,26 +259,50 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             var web = new HtmlWeb();
             var doc = await web.LoadFromWebAsync(pageUrl);
 
-            CarCreateDto carCreateDto = new();
-
             var allOffersLinks = doc.DocumentNode
                 .Descendants("h1")
                 .SelectMany(h1 => h1.Descendants("a"))
                 .Select(a => a.GetAttributeValue("href", ""))
                 .ToList();
 
+            var scrapingTasks = allOffersLinks.Select(offerLink => ProcessSingleOffer(offerLink)).ToList();
 
-            List<CarCreateDto> offers = [];
+            var offers = await Task.WhenAll(scrapingTasks);
 
-            foreach (var offerLink in allOffersLinks)
+            List<CarCreateDto> carCreateDtos = [];
+
+            foreach (var scrapedCar in offers)
             {
-                offers.Add(await ScrapSingleOffer(offerLink));
+                var car = mapper.Map<CarCreateDto>(scrapedCar);
+
+                if (scrapedCar.ModelString == null || scrapedCar.BrandString == null)
+                {
+                    continue;
+                }
+
+                var model = await modelService.GetModelByNameAndBrandName(scrapedCar.ModelString, scrapedCar.BrandString);
+
+                if (model == null)
+                {
+                    continue;
+                }
+
+                car.ModelId = model.Id;
+
+                carCreateDtos.Add(car);
             }
 
-            var createdOffers = await carService.CreateCars(offers);
+            var createdOffers = await carService.CreateCars(carCreateDtos);
 
             return createdOffers;
         }
+
+        private async Task<CarScrapedDTO> ProcessSingleOffer(string offerLink)
+        {
+            var scrapedCar = await ScrapSingleOffer(offerLink);
+            return scrapedCar;
+        }
+
 
         public async Task<List<CarDisplayDto>> ScrapAllPages(string firstPageUrl = "")
         {
