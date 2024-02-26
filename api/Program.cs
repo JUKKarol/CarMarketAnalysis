@@ -4,6 +4,7 @@ using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.Data.Repositories.CarRepository;
 using CarMarketAnalysis.Data.Repositories.ModelRepository;
 using CarMarketAnalysis.Data.Seeders;
+using CarMarketAnalysis.Middlewares;
 using CarMarketAnalysis.Services.BrandService;
 using CarMarketAnalysis.Services.CarService;
 using CarMarketAnalysis.Services.ModelService;
@@ -68,6 +69,8 @@ namespace CarMarketAnalysis
 
             builder.Services.AddScoped<ISieveProcessor, ApplicationSieveProcessor>();
 
+            builder.Services.AddScoped<ErrorHandlingMiddleware>();
+
             builder.Services.AddAuthorization();
 
 
@@ -92,6 +95,8 @@ namespace CarMarketAnalysis
             //}
 
             app.UseCors();
+
+            app.UseMiddleware<ErrorHandlingMiddleware>();
 
             app.UseHttpsRedirection();
 
