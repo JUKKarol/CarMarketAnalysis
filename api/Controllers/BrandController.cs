@@ -1,8 +1,6 @@
 ﻿using CarMarketAnalysis.Services.BrandService;
 using CarMarketAnalysis.Services.ScrapServices.PlaywrightService;
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
-using Sieve.Models;
 
 namespace CarMarketAnalysis.Controllers
 {

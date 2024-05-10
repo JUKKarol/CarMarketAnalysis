@@ -1,5 +1,4 @@
-﻿using CarMarketAnalysis.Services.BrandService;
-using CarMarketAnalysis.Services.ModelService;
+﻿using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.ScrapServices.PlaywrightService;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
@@ -9,7 +8,7 @@ namespace CarMarketAnalysis.Controllers
     [Route("api/[controller]")]
     [ApiController]
     public class ModelController(
-        IModelService modelService, 
+        IModelService modelService,
         IPlaywrightService playwrightService) : ControllerBase
 
     {

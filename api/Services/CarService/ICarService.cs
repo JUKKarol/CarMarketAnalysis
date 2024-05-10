@@ -1,6 +1,4 @@
-﻿using CarMarketAnalysis.DTOs.SharedDTOs;
-using CarMarketAnalysis.DTOs.CarDTOs;
-using Sieve.Models;
+﻿using CarMarketAnalysis.DTOs.CarDTOs;
 
 namespace CarMarketAnalysis.Services.CarService
 {

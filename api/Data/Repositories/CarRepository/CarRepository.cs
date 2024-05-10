@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Sieve.Models;
 using Sieve.Services;
-using System.Net;
 
 namespace CarMarketAnalysis.Data.Repositories.CarRepository
 {

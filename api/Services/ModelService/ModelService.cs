@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.Data.Repositories.ModelRepository;
-using CarMarketAnalysis.DTOs.BrandDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
 using CarMarketAnalysis.DTOs.SharedDTOs;
 using CarMarketAnalysis.Entities;

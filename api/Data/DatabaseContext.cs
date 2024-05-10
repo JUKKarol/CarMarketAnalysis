@@ -7,7 +7,6 @@ namespace CarMarketAnalysis.Data
     {
         public DatabaseContext(DbContextOptions options) : base(options)
         {
-
         }
 
         public DbSet<Car> Cars { get; set; }
@@ -16,7 +15,8 @@ namespace CarMarketAnalysis.Data
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.Entity<Car>(entity => {
+            builder.Entity<Car>(entity =>
+            {
                 entity.HasKey(c => c.Id);
 
                 entity.HasOne(c => c.Model)
@@ -25,7 +25,8 @@ namespace CarMarketAnalysis.Data
                     .OnDelete(DeleteBehavior.SetNull);
             });
 
-            builder.Entity<Brand>(entity => {
+            builder.Entity<Brand>(entity =>
+            {
                 entity.HasKey(b => b.Id);
 
                 entity.HasMany(c => c.Models)
@@ -34,7 +35,8 @@ namespace CarMarketAnalysis.Data
                     .OnDelete(DeleteBehavior.SetNull);
             });
 
-            builder.Entity<Model>(entity => {
+            builder.Entity<Model>(entity =>
+            {
                 entity.HasKey(m => m.Id);
 
                 entity.HasOne(m => m.Brand)

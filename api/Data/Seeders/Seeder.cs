@@ -1,7 +1,6 @@
 ﻿using Bogus;
 using CarMarketAnalysis.Entities;
 using CarMarketAnalysis.Enums;
-using System;
 
 namespace CarMarketAnalysis.Data.Seeders
 {
@@ -11,7 +10,6 @@ namespace CarMarketAnalysis.Data.Seeders
         {
             if (!db.Models.Any() && !db.Brands.Any() && !db.Cars.Any())
             {
-
                 var locale = "pl";
 
                 var brandGenerator = new Faker<Brand>()
@@ -56,11 +54,8 @@ namespace CarMarketAnalysis.Data.Seeders
                     var model = modelGenerator.Generate();
                     var car = carGenerator.Generate();
 
-
                     model.BrandId = brand.Id;
                     car.ModelId = model.Id;
-
-
 
                     brands.Add(brand);
                     models.Add(model);

@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using CarMarketAnalysis.Data.Repositories.BrandRepository;
 using CarMarketAnalysis.DTOs.BrandDTOs;
 using CarMarketAnalysis.DTOs.CarDTOs;
 using CarMarketAnalysis.DTOs.ModelDTOs;
@@ -10,9 +9,6 @@ using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.ScrapServices.Pages;
 using HtmlAgilityPack;
 using Microsoft.Playwright;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
@@ -150,7 +146,6 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
 
                 carDto.BrandString = detailsStrings.FirstOrDefault(d => d.Contains("Marka pojazdu"))?.Replace("Marka pojazdu", "").Trim();
                 carDto.ModelString = detailsStrings.FirstOrDefault(d => d.Contains("Model pojazdu"))?.Replace("Model pojazdu", "").Trim();
-                
 
                 string fuelTypeDiv = detailsStrings.FirstOrDefault(d => d.Contains("Rodzaj paliwa"));
                 string fuelTypeString = fuelTypeDiv.Replace("Rodzaj paliwa", "").Trim();
@@ -303,7 +298,6 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             return scrapedCar;
         }
 
-
         public async Task<List<CarDisplayDto>> ScrapAllPages(string firstPageUrl = "")
         {
             if (firstPageUrl == string.Empty)
@@ -323,7 +317,7 @@ namespace CarMarketAnalysis.Services.ScrapServices.PlaywrightService
             return cars;
         }
 
-        static string ExtractDescriptionFromUrl(string offerUrl)
+        private static string ExtractDescriptionFromUrl(string offerUrl)
         {
             string trimmedUrl = offerUrl.Substring(38);
 

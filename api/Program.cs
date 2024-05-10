@@ -14,7 +14,6 @@ using CarMarketAnalysis.Utilities.Sieve;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
-using Microsoft.Playwright;
 using Sieve.Services;
 using Swashbuckle.AspNetCore.Filters;
 
@@ -73,7 +72,6 @@ namespace CarMarketAnalysis
 
             builder.Services.AddAuthorization();
 
-
             var app = builder.Build();
             var scope = app.Services.CreateScope();
             var dbContext = scope.ServiceProvider.GetService<DatabaseContext>();
@@ -86,12 +84,12 @@ namespace CarMarketAnalysis
 
             //if (app.Environment.IsDevelopment())
             //{
-                var seeder = new Seeder(dbContext);
-                int recordsToSeed = 10;
-                seeder.Seed(recordsToSeed);
+            var seeder = new Seeder(dbContext);
+            int recordsToSeed = 10;
+            seeder.Seed(recordsToSeed);
 
-                app.UseSwagger();
-                app.UseSwaggerUI();
+            app.UseSwagger();
+            app.UseSwaggerUI();
             //}
 
             app.UseCors();
@@ -101,7 +99,6 @@ namespace CarMarketAnalysis
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
