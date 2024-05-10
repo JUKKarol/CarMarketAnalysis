@@ -15,14 +15,20 @@ namespace CarMarketAnalysis.Controllers
             return Ok(await playwrightService.ScrapSingleOffer(url));
         }
 
-        [HttpGet("page")]
+        [HttpPut("page")]
         public async Task<IActionResult> ScrapSinglePage(string url)
         {
             return Ok(await playwrightService.ScrapSinglePage(url));
         }
 
-        [HttpGet("all")]
+        [HttpPut("all")]
         public async Task<IActionResult> ScrapAllPages(string url)
+        {
+            return Ok(await playwrightService.ScrapAllPages(url));
+        }
+
+        [HttpGet("all")]
+        public async Task<IActionResult> GetAllCars(string url)
         {
             return Ok(await playwrightService.ScrapAllPages(url));
         }

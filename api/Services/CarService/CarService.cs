@@ -8,15 +8,9 @@ using Sieve.Models;
 namespace CarMarketAnalysis.Services.CarService
 {
     public class CarService(
-        ICarRepository carRepository, 
+        ICarRepository carRepository,
         IMapper mapper) : ICarService
     {
-        public async Task<CarDetailsDto> GetCarById(Guid carId)
-        {
-            var car = await carRepository.GetCarById(carId);
-            return mapper.Map<CarDetailsDto>(car);
-        }
-
         public async Task<RespondListDto<CarDisplayDto>> GetCars(SieveModel query)
         {
             int pageSize = query.PageSize != null ? (int)query.PageSize : 40;
@@ -36,7 +30,7 @@ namespace CarMarketAnalysis.Services.CarService
             var cars = mapper.Map<List<Car>>(carsDto);
 
             var carsWithoutNulls = cars.Where(c => c.ModelId != Guid.Empty).ToList();
-            var carsWithoutCreatedWithin5Days  = await carRepository.RemoveExistingCarsCreatedWithin5Days(carsWithoutNulls);
+            var carsWithoutCreatedWithin5Days = await carRepository.RemoveExistingCarsCreatedWithin5Days(carsWithoutNulls);
             var createdCars = mapper.Map<List<CarDisplayDto>>(await carRepository.CreateCars(carsWithoutCreatedWithin5Days));
 
             return createdCars;

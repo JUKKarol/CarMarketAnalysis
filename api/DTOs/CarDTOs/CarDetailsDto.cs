@@ -1,11 +1,9 @@
-﻿using CarMarketAnalysis.DTOs.ModelDTOs;
-using CarMarketAnalysis.Enums;
+﻿using CarMarketAnalysis.Enums;
 
 namespace CarMarketAnalysis.DTOs.CarDTOs
 {
     public class CarDetailsDto
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public int Price { get; set; }
         public Currency Currnecy { get; set; }
@@ -31,6 +29,7 @@ namespace CarMarketAnalysis.DTOs.CarDTOs
 
         public DateTime CreatedAt { get; set; }
 
-        public ModelDisplayDto Model { get; set; }
+        public string Model { get; set; }
+        public string Brand { get; set; }
     }
 }
