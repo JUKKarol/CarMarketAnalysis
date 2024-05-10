@@ -1,4 +1,5 @@
-﻿using CarMarketAnalysis.Services.ModelService;
+﻿using CarMarketAnalysis.Services.CarService;
+using CarMarketAnalysis.Services.ModelService;
 using CarMarketAnalysis.Services.ScrapServices.PlaywrightService;
 using Microsoft.AspNetCore.Mvc;
 using Sieve.Models;
@@ -7,7 +8,9 @@ namespace CarMarketAnalysis.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CarController(IPlaywrightService playwrightService) : ControllerBase
+    public class CarController(
+        IPlaywrightService playwrightService,
+        ICarService carService) : ControllerBase
     {
         [HttpGet("offer")]
         public async Task<IActionResult> ScrapSingleOffer(string url)
@@ -28,9 +31,9 @@ namespace CarMarketAnalysis.Controllers
         }
 
         [HttpGet("all")]
-        public async Task<IActionResult> GetAllCars(string url)
+        public async Task<IActionResult> GetAllCars()
         {
-            return Ok(await playwrightService.ScrapAllPages(url));
+            return Ok(await carService.GetCars());
         }
     }
 }

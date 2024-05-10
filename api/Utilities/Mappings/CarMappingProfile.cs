@@ -9,7 +9,11 @@ namespace CarMarketAnalysis.Utilities.Mappings
         public CarMappingProfile()
         {
             CreateMap<CarDisplayDto, Car>().ReverseMap();
-            CreateMap<CarDetailsDto, Car>().ReverseMap();
+            CreateMap<Car, CarDetailsDto>()
+                .ForMember(c => c.Model, opt =>
+                opt.MapFrom(src => src.Model.Name))
+                .ForMember(d => d.Brand, opt =>
+                opt.MapFrom(src => src.Model.Brand.Name));
             CreateMap<CarCreateDto, Car>().ReverseMap();
             CreateMap<CarScrapedDTO, Car>().ReverseMap();
             CreateMap<CarScrapedDTO, CarCreateDto>().ReverseMap();

@@ -17,15 +17,12 @@ namespace CarMarketAnalysis.Data.Repositories.CarRepository
                 .FirstOrDefaultAsync(c => c.Id == carId);
         }
 
-        public async Task<List<Car>> GetCars(SieveModel query)
+        public async Task<List<Car>> GetCars()
         {
-            var cars = db
+            return await db
                 .Cars
-                .AsNoTracking()
-                .AsQueryable();
-
-            return await sieveProcessor
-                .Apply(query, cars)
+                .Include(c => c.Model)
+                .ThenInclude(m => m.Brand)
                 .AsNoTracking()
                 .ToListAsync();
         }

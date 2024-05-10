@@ -6,7 +6,7 @@ namespace CarMarketAnalysis.Services.CarService
 {
     public interface ICarService
     {
-        Task<RespondListDto<CarDisplayDto>> GetCars(SieveModel query);
+        Task<List<CarDetailsDto>> GetCars();
 
         Task<List<CarDisplayDto>> CreateCars(List<CarCreateDto> carsDto);
     }

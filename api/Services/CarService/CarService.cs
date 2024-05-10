@@ -11,18 +11,12 @@ namespace CarMarketAnalysis.Services.CarService
         ICarRepository carRepository,
         IMapper mapper) : ICarService
     {
-        public async Task<RespondListDto<CarDisplayDto>> GetCars(SieveModel query)
+        public async Task<List<CarDetailsDto>> GetCars()
         {
-            int pageSize = query.PageSize != null ? (int)query.PageSize : 40;
+            var cars = await carRepository.GetCars();
+            var carsDto = mapper.Map<List<CarDetailsDto>>(cars);
 
-            var cars = await carRepository.GetCars(query);
-            var carsDto = mapper.Map<List<CarDisplayDto>>(cars);
-
-            RespondListDto<CarDisplayDto> respondListDto = new();
-            respondListDto.Items = carsDto;
-            respondListDto.ItemsCount = await carRepository.GetCarsCount(query);
-            respondListDto.PagesCount = (int)Math.Ceiling((double)respondListDto.ItemsCount / pageSize);
-            return respondListDto;
+            return carsDto;
         }
 
         public async Task<List<CarDisplayDto>> CreateCars(List<CarCreateDto> carsDto)
