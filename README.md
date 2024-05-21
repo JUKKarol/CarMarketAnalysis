@@ -18,9 +18,21 @@ This application provides tools for analyzing the car market, including tracking
    ```
    https://www.microsoft.com/en-us/sql-server/sql-server-downloads
    ```
-4. Install Google Chrome from:
+4. Install Playwright in cmd:
    ```
-   https://www.google.com/chrome
+   dotnet tool install --global PowerShell
+   ```
+   ```
+   dotnet tool update --global PowerShell
+   ```
+   ```
+   cd /your/repo/dir/api
+   ```
+   ```
+   dotnet tool install --global Microsoft.Playwright.CLI
+   ```
+   ```
+   playwright install
    ```
 
 ### Run the Project:
